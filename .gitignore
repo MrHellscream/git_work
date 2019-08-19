@@ -1,0 +1,8 @@
+.idea
+*.iml
+old
+gui
+assets
+search_duplicate_text
+search_the_penalty
+search_unused_sounds
