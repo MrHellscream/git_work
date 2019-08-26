@@ -22,10 +22,11 @@ def walk_texture(dir):
 
 def walk_scripts(dir):
     files = []
-    for name in os.listdir(dir):
-        path = os.path.join(dir, name)
-        if os.path.isfile(path) and (name.rfind('_Anim') == -1):
-            files.append(path)
+    if os.path.exists(dir):
+        for name in os.listdir(dir):
+            path = os.path.join(dir, name)
+            if os.path.isfile(path) and (name.rfind('_Anim') == -1):
+                files.append(path)
     return files
 
 
