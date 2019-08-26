@@ -10,13 +10,14 @@ def merge(lst): #res=[]
 
 def walk_texture(dir):
     files = []
-    for name in os.listdir(dir):
-        path = os.path.join(dir, name)
-        path = os.path.normpath(path)
-        if os.path.isfile(path):
-            files.append(path)
-        elif name != 'Animations':
-             files.append(walk_texture(path))
+    if os.path.exists(dir):
+        for name in os.listdir(dir):
+            path = os.path.join(dir, name)
+            path = os.path.normpath(path)
+            if os.path.isfile(path):
+                files.append(path)
+            elif name != 'Animations':
+                 files.append(walk_texture(path))
     return files
 
 

@@ -68,18 +68,22 @@ class TabSDFWidget(QWidget):
     def update(self):
         self.scenesListWidget.clear()
 
-        path_to_scenes_texture = self.projectFolderPath_ + const.PREFIX_PATH_TO_SCENES_TEXTURE
-        if not os.path.exists(path_to_scenes_texture):
-            print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
-            return
+        def updateImpl(partPathSceneTex):
+            path_to_scenes_texture = self.projectFolderPath_ + partPathSceneTex
+            if not os.path.exists(path_to_scenes_texture):
+                print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
+                return
 
-        for file_name in os.listdir(path_to_scenes_texture):
-            path = os.path.join(self.projectFolderPath_, file_name)
-            if not os.path.isfile(path):
-                fileNames = self.__getContainsUnusedFiles(file_name)
-                if len(fileNames) > 0:
-                    self.__addedSceneInfo(file_name, fileNames)
-                    self.scenesListWidget.addItem(file_name)
+            for file_name in os.listdir(path_to_scenes_texture):
+                path = os.path.join(self.projectFolderPath_, file_name)
+                if not os.path.isfile(path):
+                    fileNames = self.__getContainsUnusedFiles(file_name)
+                    if len(fileNames) > 0:
+                        self.__addedSceneInfo(file_name, fileNames)
+                        self.scenesListWidget.addItem(file_name)
+
+        updateImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE)
+        updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE)
 
 
 
@@ -93,18 +97,23 @@ class TabSDFWidget(QWidget):
     def __getContainsUnusedFiles(self, folderName):
         print('__getContainsUnusedFiles ' + folderName)
         fileNames = []
-        path_to_scenes_texture = self.projectFolderPath_ + const.PREFIX_PATH_TO_SCENES_TEXTURE + folderName
-        path_to_scenes_scripts = self.projectFolderPath_ + const.PREFIX_PATH_TO_SCENES_SCRIPTS + folderName
 
-        files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
-        files_scripts = suf.walk_scripts(path_to_scenes_scripts)
+        def getContainsUnusedFilesImpl(partPathSceneTex, partPathSceneScripts):
+            path_to_scenes_texture = self.projectFolderPath_ + partPathSceneTex + folderName
+            path_to_scenes_scripts = self.projectFolderPath_ + partPathSceneScripts + folderName
 
-        files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture)
-        # print(files_texture_unused)
+            files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
+            files_scripts = suf.walk_scripts(path_to_scenes_scripts)
 
-        for abs_name in files_texture_unused:
-            if os.path.isfile(abs_name):
-                fileNames.append(abs_name.replace('\\', '/'))
+            files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture)
+            # print(files_texture_unused)
+
+            for abs_name in files_texture_unused:
+                if os.path.isfile(abs_name):
+                    fileNames.append(abs_name.replace('\\', '/'))
+
+        getContainsUnusedFilesImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE, const.PREFIX_PATH_TO_SCENES_SCRIPTS)
+        getContainsUnusedFilesImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
 
         return fileNames
 
