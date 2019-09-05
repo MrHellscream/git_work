@@ -2,10 +2,11 @@ import sys, os
 
 
 def merge(lst): #res=[]
-    res = []
-    for el in lst:
-        merge(el) if isinstance(el, list) else res.append(el)
-    return res
+    # # res = []
+    # for el in lst:
+    #     merge(el) if isinstance(el, list) else res.append(el)
+    # return res
+    return sum(lst, [])
 
 
 def walk_texture(dir):
@@ -14,10 +15,12 @@ def walk_texture(dir):
         for name in os.listdir(dir):
             path = os.path.join(dir, name)
             path = os.path.normpath(path)
+
             if os.path.isfile(path):
+                # print('path ', path)
                 files.append(path)
             elif name != 'Animations':
-                 files.append(walk_texture(path))
+                 files.extend(walk_texture(path))
     return files
 
 
@@ -41,7 +44,7 @@ def walk(dir, files_scripts, files_texture):
     files_texture_copy = list(files_texture)
 
     for fileScript in files_scripts:
-        print(fileScript, files_texture_copy)
+        # print('walk ', fileScript, files_texture_copy)
         name = os.path.join(dir, fileScript)
         try:
             data = str(open(name, 'rb').read())
