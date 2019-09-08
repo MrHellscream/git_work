@@ -68,64 +68,60 @@ class TabSDFWidget(QWidget):
     def update(self):
         self.scenesListWidget.clear()
 
-        def updateImpl(partPathSceneTex, partPathSceneScripts):
-            path_to_scenes_texture = self.projectFolderPath_ + partPathSceneTex
+        def updateImpl(part_path_scene_tex, part_path_scene_scripts):
+            path_to_scenes_texture = self.projectFolderPath_ + part_path_scene_tex
             if not os.path.exists(path_to_scenes_texture):
                 print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
                 return
 
             for folder_name in os.listdir(path_to_scenes_texture):
-
                 # path = os.path.join(self.projectFolderPath_, folder_name)
                 path_to_scene_texture = path_to_scenes_texture + folder_name
                 print('path_to_scene_texture ', path_to_scene_texture)
 
                 if not os.path.isfile(path_to_scene_texture):
-                    # path_to_scene_texture = path_to_scenes_texture + folder_name
-                    path_to_scenes_scripts = self.projectFolderPath_ + partPathSceneScripts + folder_name
+                    path_to_scenes_scripts = self.projectFolderPath_ + part_path_scene_scripts + folder_name
                     file_names = self.__getContainsUnusedFiles(path_to_scene_texture, path_to_scenes_scripts)
                     if len(file_names) > 0:
                         self.__addedSceneInfo(folder_name, file_names)
                         self.scenesListWidget.addItem(folder_name)
 
         updateImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE, const.PREFIX_PATH_TO_SCENES_SCRIPTS)
-        # updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE)
+        updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
 
 
 
     def __addedSceneInfo(self, folder_name, info):
         self.sceneInfos[folder_name] = info
 
-    def __getSceneInfo(self, folderName):
-        return self.sceneInfos[folderName]
+    def __getSceneInfo(self, folder_name):
+        return self.sceneInfos[folder_name]
 
 
     def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
         print('__getContainsUnusedFiles ' + path_to_scenes_texture, path_to_scenes_scripts)
-        fileNames = []
+        file_names = []
 
         # files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
         files_texture = suf.walk_texture(path_to_scenes_texture)
         files_scripts = suf.walk_scripts(path_to_scenes_scripts)
 
-        print('files_texture ', files_texture)
         files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture)
         # print('files_texture_unused ', files_texture_unused)
-        print('________________________________________________')
+        # print('________________________________________________')
 
         for abs_name in files_texture_unused:
             if os.path.isfile(abs_name):
-                fileNames.append(abs_name.replace('\\', '/'))
+                file_names.append(abs_name.replace('\\', '/'))
 
 
-        return fileNames
+        return file_names
 
     def __tab1SceneSelectionChanged(self):
-        folderName = self.scenesListWidget.currentItem().text()
-        print('__tab1_scene_selection_changed ' + folderName)
+        folder_name = self.scenesListWidget.currentItem().text()
+        print('__tab1_scene_selection_changed ' + folder_name)
 
-        files_texture_unused = self.__getSceneInfo(folderName)
-        # print(files_texture_unused)
+        files_texture_unused = self.__getSceneInfo(folder_name)
 
         self.filesListWidget.clear()
         self.setTabButtonsEnabled(False)
