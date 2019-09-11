@@ -4,7 +4,7 @@ import os
 # from PyQt5 import QtGui, QtCore
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize
 
 import logging
 

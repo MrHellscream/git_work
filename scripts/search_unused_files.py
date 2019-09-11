@@ -36,12 +36,12 @@ def walk_scripts(directory):
     return files
 
 
-def get_basename(abs_name):
-    name = os.path.splitext(os.path.basename(abs_name))[0]
-    return name
+def get_realpath(abs_name, project_folder_path):
+    realpath = os.path.relpath(abs_name, start=project_folder_path).replace('\\', '/')
+    return realpath
 
 
-def walk(directory, files_scripts, files_texture):
+def walk(directory, files_scripts, files_texture, project_folder_path):
     pattern_true = []
     files_texture_copy = list(files_texture)
 
@@ -50,9 +50,10 @@ def walk(directory, files_scripts, files_texture):
         try:
             data = str(open(name, 'rb').read())
             for abs_name in files_texture_copy:
-                basename = get_basename(abs_name)
 
-                if data.find(basename) != -1:
+                realpath = get_realpath(abs_name, project_folder_path)
+
+                if data.find(realpath) != -1:
                     pattern_true.append(abs_name)
                 else:
                     pass
