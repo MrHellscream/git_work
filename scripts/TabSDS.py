@@ -4,7 +4,7 @@ import constants as const
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QLabel
 from PyQt5.QtCore import QSize
 
-class TabSDFWidget(QWidget):
+class TabSDSWidget(QWidget):
     def __init__(self, parent, projectFolderPath):
         super(QWidget, self).__init__(parent)
         # self.window_ = window
@@ -69,28 +69,29 @@ class TabSDFWidget(QWidget):
 
 
     def update(self):
-        self.scenesListWidget.clear()
-
-        def updateImpl(part_path_scene_tex, part_path_scene_scripts):
-            path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
-            if not os.path.exists(path_to_scenes_texture):
-                print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
-                return
-
-            for folder_name in os.listdir(path_to_scenes_texture):
-                # path = os.path.join(self.projectFolderPath_, folder_name)
-                path_to_scene_texture = os.path.join(path_to_scenes_texture, folder_name)
-                print('path_to_scene_texture ', path_to_scene_texture)
-
-                if not os.path.isfile(path_to_scene_texture):
-                    path_to_scenes_scripts = os.path.join(self.projectFolderPath_, part_path_scene_scripts, folder_name)
-                    file_names = self.__getContainsUnusedFiles(path_to_scene_texture, path_to_scenes_scripts)
-                    if len(file_names) > 0:
-                        self.__addedSceneInfo(folder_name, file_names)
-                        self.scenesListWidget.addItem(folder_name)
-
-        updateImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE, const.PREFIX_PATH_TO_SCENES_SCRIPTS)
-        updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
+        print('wow')
+        # self.scenesListWidget.clear()
+        #
+        # def updateImpl(part_path_scene_tex, part_path_scene_scripts):
+        #     path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
+        #     if not os.path.exists(path_to_scenes_texture):
+        #         print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
+        #         return
+        #
+        #     for folder_name in os.listdir(path_to_scenes_texture):
+        #         # path = os.path.join(self.projectFolderPath_, folder_name)
+        #         path_to_scene_texture = os.path.join(path_to_scenes_texture, folder_name)
+        #         print('path_to_scene_texture ', path_to_scene_texture)
+        #
+        #         if not os.path.isfile(path_to_scene_texture):
+        #             path_to_scenes_scripts = os.path.join(self.projectFolderPath_, part_path_scene_scripts, folder_name)
+        #             file_names = self.__getContainsUnusedFiles(path_to_scene_texture, path_to_scenes_scripts)
+        #             if len(file_names) > 0:
+        #                 self.__addedSceneInfo(folder_name, file_names)
+        #                 self.scenesListWidget.addItem(folder_name)
+        #
+        # updateImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE, const.PREFIX_PATH_TO_SCENES_SCRIPTS)
+        # updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
 
 
 

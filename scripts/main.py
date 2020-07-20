@@ -9,6 +9,7 @@ from PyQt5.QtCore import QSize
 import logging
 
 import TabSDF as tabSDF
+import TabSDS as tabSDS
 import constants
 
 # Ui_MainWindow, QMainWindow = loadUiType('gui\mainwindow.ui')
@@ -34,14 +35,22 @@ class Main(QMainWindow):
         self.tabs = QTabWidget()
 
         self.tab1 = tabSDF.TabSDFWidget(self, self.projectFolderPath_)
+        self.tab2 = tabSDS.TabSDSWidget(self, self.projectFolderPath_)
 
-        self.tabs.addTab(self.tab1, "Search for duplicate files")
+        self.tabs.addTab(self.tab1, "Search unused layers")
+        self.tabs.addTab(self.tab2, "Search unused sounds")
+
+        self.tabs.currentChanged.connect(self.onChangeTab)
 
         self.setCentralWidget(self.tabs)
 
 
     def update(self):
         self.tab1.update()
+
+    def onChangeTab(self, index):
+        print('sssss', index)
+        self.tabs.currentWidget().update()
 
 
 
