@@ -1,5 +1,5 @@
 import os
-import search_unused_files as suf
+import search_unused_sounds as sus
 import constants as const
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QLabel
 from PyQt5.QtCore import QSize
@@ -15,22 +15,22 @@ class TabSDSWidget(QWidget):
         # GUI Tab
         self.horizontLayout = QHBoxLayout(self)
 
-        self.scenesListWidget = QListWidget()
+        # self.scenesListWidget = QListWidget()
         self.filesListWidget = QListWidget()
 
-        self.sceneListLabel = QLabel('Scenes')
+        # self.sceneListLabel = QLabel('Scenes')
         self.filesListLabel = QLabel('Files')
 
-        self.sceneLayout = QVBoxLayout(self)
+        # self.sceneLayout = QVBoxLayout(self)
         self.filesLayout = QVBoxLayout(self)
 
-        self.sceneLayout.addWidget(self.sceneListLabel, 0)
+        # self.sceneLayout.addWidget(self.sceneListLabel, 0)
         self.filesLayout.addWidget(self.filesListLabel, 0)
 
-        self.sceneLayout.addWidget(self.scenesListWidget)
+        # self.sceneLayout.addWidget(self.scenesListWidget)
         self.filesLayout.addWidget(self.filesListWidget)
 
-        self.horizontLayout.addLayout(self.sceneLayout, 15)
+        # self.horizontLayout.addLayout(self.sceneLayout, 15)
         self.horizontLayout.addLayout(self.filesLayout, 75)
 
 
@@ -49,7 +49,7 @@ class TabSDSWidget(QWidget):
         self.horizontLayout.addLayout(self.verticalLayout, 10)
         self.setLayout(self.horizontLayout)
 
-        self.scenesListWidget.itemSelectionChanged.connect(self.__tab1SceneSelectionChanged)
+        # self.scenesListWidget.itemSelectionChanged.connect(self.__tab1SceneSelectionChanged)
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
 
 
@@ -67,13 +67,31 @@ class TabSDSWidget(QWidget):
         self.openFolderButton.setEnabled(enable)
         self.deleteFileButton.setEnabled(enable)
 
-
-    def update(self):
         print('wow')
         # self.scenesListWidget.clear()
         #
-        # def updateImpl(part_path_scene_tex, part_path_scene_scripts):
-        #     path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
+
+        def showContent(path_to_sounds, path_to_scenes_scripts):
+            sound_names = []
+            script_names = []
+
+            for path in path_to_sounds:
+                full_path_to_sounds = os.path.join(self.projectFolderPath_, path)
+                sound_names.append(sus.getSoundNames(full_path_to_sounds))
+
+            sound_names = sus.merge(sound_names)
+
+            print(sound_names)
+
+            for path in path_to_scenes_scripts:
+                full_path_to_script = os.path.join(self.projectFolderPath_, path)
+                script_names.append(sus.getScriptNames(full_path_to_script))
+
+            script_names = sus.merge(scripts)
+            print(script_names)
+
+
+            # path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
         #     if not os.path.exists(path_to_scenes_texture):
         #         print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
         #         return
@@ -90,8 +108,8 @@ class TabSDSWidget(QWidget):
         #                 self.__addedSceneInfo(folder_name, file_names)
         #                 self.scenesListWidget.addItem(folder_name)
         #
-        # updateImpl(const.PREFIX_PATH_TO_SCENES_TEXTURE, const.PREFIX_PATH_TO_SCENES_SCRIPTS)
-        # updateImpl(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
+        showContent(const.PATH_TO_SOUNDS)
+        # showContent(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
 
 
 
@@ -189,6 +207,6 @@ class TabSDSWidget(QWidget):
             return
 
     def __resetButtonClick(self):
-        self.scenesListWidget.clear()
+        # self.scenesListWidget.clear()
         self.filesListWidget.clear()
         self.update()
