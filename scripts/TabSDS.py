@@ -10,7 +10,7 @@ class TabSDSWidget(QWidget):
         # self.window_ = window
         self.projectFolderPath_ = projectFolderPath
 
-        self.sceneInfos = {}
+        self.sounds_info = {}
 
         # GUI Tab
         self.horizontLayout = QHBoxLayout(self)
@@ -67,9 +67,11 @@ class TabSDSWidget(QWidget):
         self.openFolderButton.setEnabled(enable)
         self.deleteFileButton.setEnabled(enable)
 
+
+
+    def update(self):
         print('wow')
-        # self.scenesListWidget.clear()
-        #
+        self.filesListWidget.clear()
 
         def showContent(path_to_sounds, path_to_scenes_scripts):
             sound_names = []
@@ -87,8 +89,15 @@ class TabSDSWidget(QWidget):
                 full_path_to_script = os.path.join(self.projectFolderPath_, path)
                 script_names.append(sus.getScriptNames(full_path_to_script))
 
-            script_names = sus.merge(scripts)
+            script_names = sus.merge(script_names)
             print(script_names)
+
+            # files_sounds_unused = sus.walk(sus.script_names, sound_names)
+            # print(files_sounds_unused)
+            #
+            # if len(files_sounds_unused) > 0:
+            #     # self.__addedSoundInfo(sound_name, path)
+            #     self.filesListWidget.addItem(sound_name)
 
 
             # path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
@@ -108,48 +117,50 @@ class TabSDSWidget(QWidget):
         #                 self.__addedSceneInfo(folder_name, file_names)
         #                 self.scenesListWidget.addItem(folder_name)
         #
-        showContent(const.PATH_TO_SOUNDS)
-        # showContent(const.PREFIX_PATH_TO_CE_SCENES_TEXTURE, const.PREFIX_PATH_TO_CE_SCENES_SCRIPTS)
+
+
+        showContent(const.PATH_TO_SOUNDS, [const.PATH_TO_SCENES_SCRIPTS, const.PATH_TO_CE_SCENES_SCRIPTS])  #PATH_TO_SCREEN_SCRIPTS
 
 
 
-    def __addedSceneInfo(self, folder_name, info):
-        self.sceneInfos[folder_name] = info
 
-    def __getSceneInfo(self, folder_name):
-        return self.sceneInfos[folder_name]
+    def __addedSoundInfo(self, sound_name, info):
+        self.sounds_info[sound_name] = info
 
-
-    def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
-        print('__getContainsUnusedFiles ' + path_to_scenes_texture, path_to_scenes_scripts)
-        file_names = []
-
-        # files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
-        files_texture = suf.walk_texture(path_to_scenes_texture)
-        files_scripts = suf.walk_scripts(path_to_scenes_scripts)
-
-        files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.projectFolderPath_)
-        # print('files_texture_unused ', files_texture_unused)
-        # print('________________________________________________')
-
-        for abs_name in files_texture_unused:
-            if os.path.isfile(abs_name):
-                file_names.append(abs_name.replace('\\', '/'))
+    def __getSoundInfo(self, sound_name):
+        return self.sounds_info[sound_name]
 
 
-        return file_names
+    # def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
+    #     print('__getContainsUnusedFiles ' + path_to_scenes_texture, path_to_scenes_scripts)
+    #     file_names = []
+    #
+    #     # files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
+    #     files_texture = suf.walk_texture(path_to_scenes_texture)
+    #     files_scripts = suf.walk_scripts(path_to_scenes_scripts)
+    #
+    #     files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.projectFolderPath_)
+    #     # print('files_texture_unused ', files_texture_unused)
+    #     # print('________________________________________________')
+    #
+    #     for abs_name in files_texture_unused:
+    #         if os.path.isfile(abs_name):
+    #             file_names.append(abs_name.replace('\\', '/'))
+    #
+    #
+    #     return file_names
 
-    def __tab1SceneSelectionChanged(self):
-        folder_name = self.scenesListWidget.currentItem().text()
-        print('__tab1_scene_selection_changed ' + folder_name)
-
-        files_texture_unused = self.__getSceneInfo(folder_name)
-
-        self.filesListWidget.clear()
-        self.setTabButtonsEnabled(False)
-        for abs_name in files_texture_unused:
-            if os.path.isfile(abs_name):
-                self.filesListWidget.addItem(abs_name)
+    # def __tab1SceneSelectionChanged(self):
+    #     folder_name = self.scenesListWidget.currentItem().text()
+    #     print('__tab1_scene_selection_changed ' + folder_name)
+    #
+    #     files_texture_unused = self.__getSceneInfo(folder_name)
+    #
+    #     self.filesListWidget.clear()
+    #     self.setTabButtonsEnabled(False)
+    #     for abs_name in files_texture_unused:
+    #         if os.path.isfile(abs_name):
+    #             self.filesListWidget.addItem(abs_name)
 
 
     def __tab1FileSelectionChanged(self):
@@ -170,41 +181,41 @@ class TabSDSWidget(QWidget):
 
     def __openFolderButtonClick(self):
         current_item = self.filesListWidget.currentItem()
-        if current_item:
-            path_to_file = current_item.text()
-            path_to_folder = os.path.split(path_to_file)[0]
-
-            if os.path.exists(path_to_folder):
-                try:
-                    os.startfile(path_to_folder)
-                except OSError as e:  # if failed, report it back to the user
-                    print("Error: %s - %s." % (e.filename, e.strerror))
+        # if current_item:
+        #     path_to_file = current_item.text()
+        #     path_to_folder = os.path.split(path_to_file)[0]
+        #
+        #     if os.path.exists(path_to_folder):
+        #         try:
+        #             os.startfile(path_to_folder)
+        #         except OSError as e:  # if failed, report it back to the user
+        #             print("Error: %s - %s." % (e.filename, e.strerror))
 
 
     def __deleteFileButtonClick(self):
         current_item = self.filesListWidget.currentItem()
 
-        if current_item:
-            path_to_file = current_item.text()
-            if os.path.exists(path_to_file):
-                try:
-                    os.remove(path_to_file)
-                except OSError as e:  # if failed, report it back to the user
-                    print("Error: %s - %s." % (e.filename, e.strerror))
-                    return
-            else:
-                print("The file does not exist")
-
-            selected_items = self.filesListWidget.selectedItems()
-            for item in selected_items:
-                self.filesListWidget.takeItem(self.filesListWidget.row(item))
-
-
-            if self.filesListWidget.count() == 0:
-                self.scenesListWidget.takeItem(self.scenesListWidget.currentRow())
-                # self.__addedSceneInfo(file_name, None)
-        else:
-            return
+        # if current_item:
+        #     path_to_file = current_item.text()
+        #     if os.path.exists(path_to_file):
+        #         try:
+        #             os.remove(path_to_file)
+        #         except OSError as e:  # if failed, report it back to the user
+        #             print("Error: %s - %s." % (e.filename, e.strerror))
+        #             return
+        #     else:
+        #         print("The file does not exist")
+        #
+        #     selected_items = self.filesListWidget.selectedItems()
+        #     for item in selected_items:
+        #         self.filesListWidget.takeItem(self.filesListWidget.row(item))
+        #
+        #
+        #     if self.filesListWidget.count() == 0:
+        #         self.scenesListWidget.takeItem(self.scenesListWidget.currentRow())
+        #         # self.__addedSceneInfo(file_name, None)
+        # else:
+        #     return
 
     def __resetButtonClick(self):
         # self.scenesListWidget.clear()
