@@ -30,7 +30,7 @@ def merge(lst, res=None):
     if res is None:
         res = []
     for el in lst:
-        merge(el) if isinstance(el, list) else res.append(el)
+        merge(el, res) if isinstance(el, list) else res.append(el)
     return res
 
 
@@ -65,30 +65,33 @@ def getScriptNames(dir):
 
     return files
 
-#
-# def FixedPattern(patternName):
-#     patternName = '\'' + patternName.replace('.ogg', '') + '\''
-#     return patternName
-#
-# def walk(filesScripts, filesSounds):
-#     patternTrue = []
-#     filesSoundsCopy = list(filesSounds)
-#     for fileScript in filesScripts:
-#         try:
-#             data = open(fileScript,'rb').read()
-#             for patternName in filesSoundsCopy:
-#                 pattern = FixedPattern(patternName)
-#                 if data.find(pattern) != -1:
-#                     patternTrue.append(patternName)
-#                 else:
-#                     pass
-#             for patternName in patternTrue:
-#                 filesSoundsCopy.remove(patternName)
-#             patternTrue = []
-#         except:
-#             print 'What went wrong!!!!Maybe can not open file: ' + fileScript
-#             return None
-#     return filesSoundsCopy
+
+def fixedPattern(pattern_name):
+    pattern_name = '\'' + pattern_name.replace('.ogg', '') + '\''
+    return pattern_name
+
+
+
+def walk(files_scripts, files_sounds):
+    pattern_true = []
+    files_sounds_copy = list(files_sounds)
+    for file_script in files_scripts:
+        try:
+            data = open(file_script,'rb').read()
+            for patternName in files_sounds_copy:
+                pattern = fixedPattern(patternName)
+                if data.find(pattern) != -1:
+                    pattern_true.append(patternName)
+                else:
+                    pass
+            for patternName in pattern_true:
+                files_sounds_copy.remove(patternName)
+            pattern_true = []
+
+        except OSError:
+            print('What went wrong!!!!Maybe can not open file: ' + file_script)
+            return None
+    return files_sounds_copy
 #
 # print 'Start search unused sounds:\n'
 # try:

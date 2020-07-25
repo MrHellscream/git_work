@@ -4,11 +4,12 @@ import constants as const
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QLabel
 from PyQt5.QtCore import QSize
 
+
 class TabSDFWidget(QWidget):
-    def __init__(self, parent, projectFolderPath):
+    def __init__(self, parent, project_folder_path):
         super(QWidget, self).__init__(parent)
         # self.window_ = window
-        self.projectFolderPath_ = projectFolderPath
+        self.projectFolderPath_ = project_folder_path
 
         self.sceneInfos = {}
 
