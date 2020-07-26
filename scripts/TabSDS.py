@@ -74,26 +74,24 @@ class TabSDSWidget(QWidget):
         self.filesListWidget.clear()
 
         def showContent(path_to_sounds, path_to_scenes_scripts):
-            sound_names = []
+            sounds = {}
             script_names = []
 
             for path in path_to_sounds:
                 full_path_to_sounds = os.path.join(self.projectFolderPath_, path)
-                sound_names.append(sus.getSoundNames(full_path_to_sounds))
+                sounds.update(sus.getSoundNames(full_path_to_sounds))
 
-            sound_names = sus.merge(sound_names)
-
-            print(sound_names)
+            # print(sounds)
 
             for path in path_to_scenes_scripts:
                 full_path_to_script = os.path.join(self.projectFolderPath_, path)
                 script_names.append(sus.getScriptNames(full_path_to_script))
 
             script_names = sus.merge(script_names)
-            print(script_names)
+            # print(script_names)
 
-            # files_sounds_unused = sus.walk(sus.script_names, sound_names)
-            # print(files_sounds_unused)
+            files_sounds_unused = sus.walk(script_names, sounds)
+            print(files_sounds_unused)
             #
             # if len(files_sounds_unused) > 0:
             #     # self.__addedSoundInfo(sound_name, path)
