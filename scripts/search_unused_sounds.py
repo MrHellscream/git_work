@@ -1,29 +1,4 @@
-import sys, os
-
-
-#
-#
-# ROOT_PATH=os.path.abspath(os.getcwd()).replace('\\dist', '')
-#
-# pathToScenesScripts   = [ ROOT_PATH + '\\assets\\Scripts\\',
-#                           ROOT_PATH + '\\assets\\ExtraGameplay\\Scripts\\',
-#                           ROOT_PATH + '\\assets\\ExtraContent\\Scripts'
-#                         ]
-#
-# pathToSounds          = [ ROOT_PATH + '\\assets\\Sound\\Scenes\\00_Common',
-#                           ROOT_PATH + '\\assets\\Sound\\Common',
-#                           ROOT_PATH + '\\assets\\Sound\\AmbientSounds'
-#                         ]
-#
-# sounds  = []
-# scripts = []
-#
-# def merge(lst, res=[]):
-#     res = []
-#     for el in lst:
-#         res += merge(el) if isinstance(el, list) else [el]
-#     return res
-#
+import os
 
 
 def merge(lst, res=None):
@@ -35,10 +10,11 @@ def merge(lst, res=None):
 
 
 def getSoundNames(dir):
-    sounds = []
+    sounds = {}
     if os.path.exists(dir):
-        sounds = os.listdir(dir)
+        sound_names = os.listdir(dir)
 
+        sounds = dict((os.path.splitext(sound_name)[0], os.path.join(dir, sound_name)) for sound_name in sound_names)
     else:
         print('What went wrong!!!!Maybe can not open folder: ' + dir)
 
@@ -66,32 +42,30 @@ def getScriptNames(dir):
     return files
 
 
-def fixedPattern(pattern_name):
-    pattern_name = '\'' + pattern_name.replace('.ogg', '') + '\''
-    return pattern_name
+def walk(files_scripts, sounds):
+    found_sounds = []
 
+    sounds_copy = dict.copy(sounds)
 
+    sound_names = sounds_copy.keys()
 
-def walk(files_scripts, files_sounds):
-    pattern_true = []
-    files_sounds_copy = list(files_sounds)
     for file_script in files_scripts:
         try:
-            data = open(file_script,'rb').read()
-            for patternName in files_sounds_copy:
-                pattern = fixedPattern(patternName)
-                if data.find(pattern) != -1:
-                    pattern_true.append(patternName)
-                else:
-                    pass
-            for patternName in pattern_true:
-                files_sounds_copy.remove(patternName)
-            pattern_true = []
-
+            with open(file_script) as f:
+                for num, line in enumerate(f, start=1):
+                    for sound_name in sound_names:
+                        if sound_name in line:
+                            found_sounds.append(sound_name)
         except OSError:
             print('What went wrong!!!!Maybe can not open file: ' + file_script)
-            return None
-    return files_sounds_copy
+
+
+        for found_sound_name in found_sounds:
+            if sounds_copy.get(found_sound_name):
+                sounds_copy.pop(found_sound_name)
+        found_sounds = []
+
+    return sounds_copy
 #
 # print 'Start search unused sounds:\n'
 # try:

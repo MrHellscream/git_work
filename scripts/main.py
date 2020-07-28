@@ -1,8 +1,8 @@
 import sys
 import os
-import json
-import constants as const
 
+import constants as const
+import configHelpers as confHelper
 # from PyQt5 import QtGui, QtCore
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction
@@ -19,13 +19,13 @@ import constants
 
 
 class Main(QMainWindow):
-    def __init__(self, project_folder_path):
+    def __init__(self, folder_path):
         super(Main, self).__init__()
         # self.setupUi(self)
 
-        self.projectFolderPath_ = project_folder_path
+        self.project_folder_path_ = folder_path
 
-        self.title = 'Test'
+        self.title = self.project_folder_path_
         self.left = 100
         self.top = 100
         self.width = 900
@@ -39,8 +39,8 @@ class Main(QMainWindow):
 
         self.tabs = QTabWidget()
 
-        self.tab1 = tabSDF.TabSDFWidget(self, self.projectFolderPath_)
-        self.tab2 = tabSDS.TabSDSWidget(self, self.projectFolderPath_)
+        self.tab1 = tabSDF.TabSDFWidget(self)
+        self.tab2 = tabSDS.TabSDSWidget(self)
 
         self.tabs.addTab(self.tab1, "Search unused layers")
         self.tabs.addTab(self.tab2, "Search unused sounds")
@@ -64,15 +64,40 @@ class Main(QMainWindow):
         fileMenu.addAction(extractAction)
 
 
+    def getProjectFolderPath(self):
+        return self.project_folder_path_
+
+    def setProjectFolderPath(self, folder_path):
+        self.project_folder_path_ = folder_path
+
+    def updateTitle(self):
+        print('new_project_folder_path ' + self.project_folder_path_)
+        self.title = self.getProjectFolderPath()
+        self.setWindowTitle(self.title)
+
     def update(self):
-        self.tab1.update()
+        self.tab1.update(self.getProjectFolderPath())
 
     def onChangeTab(self, index):
         print('sssss', index)
-        self.tabs.currentWidget().update()
+        self.tabs.currentWidget().update(self.getProjectFolderPath())
+
 
     def newProject(self):
-        pass
+        new_project_folder_path = QFileDialog.getExistingDirectory(None,
+                                                                   'Select project folder:',
+                                                                   self.project_folder_path_)
+
+        if new_project_folder_path and os.path.exists(new_project_folder_path):
+            print(new_project_folder_path)
+            confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, new_project_folder_path)
+
+
+            self.setProjectFolderPath(new_project_folder_path)
+
+            self.updateTitle()
+
+            self.tabs.currentWidget().update(self.getProjectFolderPath())
 
 
 if __name__ == '__main__':
@@ -82,35 +107,19 @@ if __name__ == '__main__':
 
 
 
-    config_data = {}
-
     if os.path.exists(const.CONFIG_PATH):
-        try:
-            with open(const.CONFIG_PATH) as config_file:
-                config_data = json.load(config_file)
-        except json.JSONDecodeError:
-            print('Upsss ' + const.CONFIG_PATH + ' is empty')
-
-        project_folder_path = config_data.get('projectFolderPath')
-
-        print(config_data)
+        project_folder_path = confHelper.getProjectFolderPathFromConfig(const.CONFIG_PATH)
 
     else:
-        config_file = open(const.CONFIG_PATH, "w")
-        config_data = {'projectFolderPath': None}
-
-        json.dump(config_data, config_file)
-
-        config_file.close()
+        confHelper.createConfig(const.CONFIG_PATH)
 
 
-    if not project_folder_path or not os.path.exists(project_folder_path):
+
+    if not project_folder_path:
         # only folder.
         project_folder_path = QFileDialog.getExistingDirectory(None, 'Select project folder:', os.getcwd())
 
-        config_data = {'projectFolderPath': project_folder_path}
-        with open(const.CONFIG_PATH, 'w') as config_file:
-            json.dump(config_data, config_file)
+        confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, project_folder_path)
 
 
 

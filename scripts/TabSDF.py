@@ -6,10 +6,11 @@ from PyQt5.QtCore import QSize
 
 
 class TabSDFWidget(QWidget):
-    def __init__(self, parent, project_folder_path):
+    def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         # self.window_ = window
-        self.projectFolderPath_ = project_folder_path
+
+        self.project_folder_path_ = None
 
         self.sceneInfos = {}
 
@@ -69,22 +70,28 @@ class TabSDFWidget(QWidget):
         self.deleteFileButton.setEnabled(enable)
 
 
-    def update(self):
+    def update(self, project_folder_path=None):
+        if project_folder_path:
+            self.project_folder_path_ = project_folder_path
+
         self.scenesListWidget.clear()
 
         def showContent(part_path_scene_tex, part_path_scene_scripts):
-            path_to_scenes_texture = os.path.join(self.projectFolderPath_, part_path_scene_tex)
+            path_to_scenes_texture = os.path.join(self.project_folder_path_, part_path_scene_tex)
             if not os.path.exists(path_to_scenes_texture):
                 print('What went wrong!!!!Maybe can not open folder: ' + path_to_scenes_texture)
                 return
 
             for folder_name in os.listdir(path_to_scenes_texture):
-                # path = os.path.join(self.projectFolderPath_, folder_name)
+                # path = os.path.join(self.project_folder_path_, folder_name)
                 path_to_scene_texture = os.path.join(path_to_scenes_texture, folder_name)
                 # print('path_to_scene_texture ', path_to_scene_texture)
 
                 if not os.path.isfile(path_to_scene_texture):
-                    path_to_scenes_scripts = os.path.join(self.projectFolderPath_, part_path_scene_scripts, folder_name)
+                    path_to_scenes_scripts = os.path.join(self.project_folder_path_,
+                                                          part_path_scene_scripts,
+                                                          folder_name)
+
                     file_names = self.__getContainsUnusedFiles(path_to_scene_texture, path_to_scenes_scripts)
                     if len(file_names) > 0:
                         self.__addedSceneInfo(folder_name, file_names)
@@ -110,7 +117,7 @@ class TabSDFWidget(QWidget):
         files_texture = suf.walk_texture(path_to_scenes_texture)
         files_scripts = suf.walk_scripts(path_to_scenes_scripts)
 
-        files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.projectFolderPath_)
+        files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.project_folder_path_)
         # print('files_texture_unused ', files_texture_unused)
         # print('________________________________________________')
 

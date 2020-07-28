@@ -22,7 +22,7 @@ def walk_texture(directory):
                 # print('path ', path)
                 files.append(path)
             elif name != 'Animations':
-                 files.extend(walk_texture(path))
+                files.extend(walk_texture(path))
     return files
 
 
@@ -60,7 +60,8 @@ def walk(directory, files_scripts, files_texture, project_folder_path):
 
             for patternName in pattern_true:
                 files_texture_copy.remove(patternName)
-        except Exception:
+
+        except OSError:
             print('What went wrong!!!!Maybe can not open or read file: ' + name)
             return None
         finally:
