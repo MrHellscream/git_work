@@ -75,6 +75,7 @@ class TabSDFWidget(QWidget):
             self.project_folder_path_ = project_folder_path
 
         self.scenesListWidget.clear()
+        self.filesListWidget.clear()
 
         def showContent(part_path_scene_tex, part_path_scene_scripts):
             path_to_scenes_texture = os.path.join(self.project_folder_path_, part_path_scene_tex)

@@ -31,7 +31,7 @@ def walk_scripts(directory):
     if os.path.exists(directory):
         for name in os.listdir(directory):
             path = os.path.join(directory, name)
-            if os.path.isfile(path) and (name.rfind('_Anim') == -1):
+            if os.path.isfile(path) and (name.rfind('_Anim.lua') == -1):
                 files.append(path)
     return files
 

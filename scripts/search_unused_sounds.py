@@ -29,7 +29,7 @@ def getScriptNames(dir):
             path = os.path.join(dir, name)
             # and (name.rfind('.lua') <> -1)
             if os.path.isfile(path):
-                if name.rfind('_Anim') == -1 and \
+                if name.rfind('_Anim.lua') == -1 and \
                    name != 'SoundsList.lua' and \
                    name.rfind('_Dialog_') == -1:
                     files.append(path)
