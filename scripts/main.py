@@ -1,18 +1,17 @@
 import sys
 import os
+import logging
 
-import constants as const
-import configHelpers as confHelper
 # from PyQt5 import QtGui, QtCore
 from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction
 from PyQt5.QtCore import QSize
 
-import logging
-
+import constants as const
+import configHelpers as confHelper
 import TabSDF as tabSDF
 import TabSDS as tabSDS
-import constants
+
 
 # Ui_MainWindow, QMainWindow = loadUiType('gui\mainwindow.ui')
 
@@ -51,17 +50,16 @@ class Main(QMainWindow):
 
 
         # MENU
-
-        extractAction = QAction("&New Project", self)
-        # extractAction.setShortcut("Ctrl+O")
-        # extractAction.setStatusTip('New Project')
-        extractAction.triggered.connect(self.newProject)
+        extract_action = QAction("&New Project", self)
+        # extract_action.setShortcut("Ctrl+O")
+        # extract_action.setStatusTip('New Project')
+        extract_action.triggered.connect(self.newProject)
 
         # self.statusBar()
 
-        mainMenu = self.menuBar()
-        fileMenu = mainMenu.addMenu('&File')
-        fileMenu.addAction(extractAction)
+        main_menu = self.menuBar()
+        file_menu = main_menu.addMenu('&File')
+        file_menu.addAction(extract_action)
 
 
     def getProjectFolderPath(self):
@@ -79,7 +77,7 @@ class Main(QMainWindow):
         self.tab1.update(self.getProjectFolderPath())
 
     def onChangeTab(self, index):
-        print('sssss', index)
+        print('onChangeTab', index)
         self.tabs.currentWidget().update(self.getProjectFolderPath())
 
 
@@ -91,7 +89,6 @@ class Main(QMainWindow):
         if new_project_folder_path and os.path.exists(new_project_folder_path):
             print(new_project_folder_path)
             confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, new_project_folder_path)
-
 
             self.setProjectFolderPath(new_project_folder_path)
 
@@ -105,14 +102,10 @@ if __name__ == '__main__':
 
     project_folder_path = None
 
-
-
     if os.path.exists(const.CONFIG_PATH):
         project_folder_path = confHelper.getProjectFolderPathFromConfig(const.CONFIG_PATH)
-
     else:
         confHelper.createConfig(const.CONFIG_PATH)
-
 
 
     if not project_folder_path:
@@ -120,8 +113,6 @@ if __name__ == '__main__':
         project_folder_path = QFileDialog.getExistingDirectory(None, 'Select project folder:', os.getcwd())
 
         confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, project_folder_path)
-
-
 
 
     if project_folder_path:

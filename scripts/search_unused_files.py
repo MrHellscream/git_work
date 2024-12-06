@@ -13,8 +13,8 @@ def merge(lst, res=None):
 
 def walk_texture(directory):
     files = []
+
     if os.path.exists(directory):
-        #print('directory ', directory, os.path.basename(directory))
         basename = os.path.basename(directory)
         if not re.search(r'.+_all\b', basename):
             for name in os.listdir(directory):
@@ -22,20 +22,17 @@ def walk_texture(directory):
                 path = os.path.normpath(path)
 
                 if os.path.isfile(path):
-                    #print('path ', path)
                     files.append(path)
                 elif name != 'Animations':
-                    #print('name', name)
                     files.extend(walk_texture(path))
     return files
 
 
 def walk_scripts(directory):
-    #print('walk_scripts', directory)
     files = []
 
-    def isLuaAnimFile(name):
-        return re.search(r'.+_Anim.lua\b', name) #(name.rfind('_Anim.lua') == -1)
+    def isLuaAnimFile(file_name):
+        return re.search(r'.+_Anim.lua\b', file_name) #(name.rfind('_Anim.lua') == -1)
     
     if os.path.exists(directory):
         for name in os.listdir(directory):
@@ -51,16 +48,14 @@ def walk_scripts(directory):
 
 
 
-def get_realpath(abs_name, project_folder_path):
-    realpath = os.path.relpath(abs_name, start=project_folder_path).replace('\\', '/')
-    return realpath
+def get_real_path(abs_name, project_folder_path):
+    real_path = os.path.relpath(abs_name, start=project_folder_path).replace('\\', '/')
+    return real_path
 
 
 def walk(directory, files_scripts, files_texture, project_folder_path):
     pattern_true = []
     files_texture_copy = list(files_texture)
-
-    #print(files_scripts, files_texture) 
 
     for fileScript in files_scripts:
         name = os.path.join(directory, fileScript)
@@ -68,9 +63,9 @@ def walk(directory, files_scripts, files_texture, project_folder_path):
             data = str(open(name, 'rb').read())
             for abs_name in files_texture_copy:
 
-                realpath = get_realpath(abs_name, project_folder_path)
+                real_path = get_real_path(abs_name, project_folder_path)
 
-                if data.find(realpath) != -1:
+                if data.find(real_path) != -1:
                     pattern_true.append(abs_name)
                 else:
                     pass

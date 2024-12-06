@@ -1,10 +1,10 @@
 import os
-import search_unused_files as suf
-import constants as const
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QListWidget, QLabel
 from PyQt5.QtCore import QSize
 
-
+import search_unused_files as suf
+import constants as const
 
 class TabSDFWidget(QWidget):
     def __init__(self, parent):
