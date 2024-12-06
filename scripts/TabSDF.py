@@ -13,7 +13,7 @@ class TabSDFWidget(QWidget):
 
         self.project_folder_path_ = None
 
-        self.sceneInfos = {}
+        self.scene_infos = {}
 
         # GUI Tab
         self.horizontLayout = QHBoxLayout(self)
@@ -108,10 +108,10 @@ class TabSDFWidget(QWidget):
 
 
     def __addedSceneInfo(self, folder_name, info):
-        self.sceneInfos[folder_name] = info
+        self.scene_infos[folder_name] = info
 
     def __getSceneInfo(self, folder_name):
-        return self.sceneInfos[folder_name]
+        return self.scene_infos[folder_name]
 
 
     def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
