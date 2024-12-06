@@ -28,7 +28,7 @@ class Main(QMainWindow):
         self.title = self.project_folder_path_
         self.left = 100
         self.top = 100
-        self.width = 900
+        self.width = 1200
         self.height = 600
 
         # TABS

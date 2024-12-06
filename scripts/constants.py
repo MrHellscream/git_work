@@ -3,6 +3,12 @@ CONFIG_PATH = 'config.json'
 PATH_TO_SCENES_TEXTURE = 'assets/Texture/Scenes/'
 PATH_TO_SCENES_SCRIPTS = 'assets/Scripts/Scenes/'
 
+PATH_TO_INTERACTIVE_ITEM_TEXTURE = 'assets/Texture/Items/_Interactive/'
+PATH_TO_INTERACTIVE_ITEM_SCRIPTS = 'assets/Scripts/Items/_Interactive/'
+
+PATH_TO_CE_INTERACTIVE_ITEM_TEXTURE = 'assets/ExtraGameplay/Texture/Items/_Interactive/'
+PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS = 'assets/ExtraGameplay/Scripts/Items/_Interactive/'
+
 PATH_TO_CE_SCENES_TEXTURE = 'assets/ExtraGameplay/Texture/Scenes/'
 PATH_TO_CE_SCENES_SCRIPTS = 'assets/ExtraGameplay/Scripts/Scenes/'
 

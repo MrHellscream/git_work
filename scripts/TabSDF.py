@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLis
 from PyQt5.QtCore import QSize
 
 
+
 class TabSDFWidget(QWidget):
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
@@ -98,9 +99,12 @@ class TabSDFWidget(QWidget):
                         self.__addedSceneInfo(folder_name, file_names)
                         self.scenesListWidget.addItem(folder_name)
 
+        #------------
         showContent(const.PATH_TO_SCENES_TEXTURE, const.PATH_TO_SCENES_SCRIPTS)
         showContent(const.PATH_TO_CE_SCENES_TEXTURE, const.PATH_TO_CE_SCENES_SCRIPTS)
-
+        
+        showContent(const.PATH_TO_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_INTERACTIVE_ITEM_SCRIPTS)
+        showContent(const.PATH_TO_CE_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS)
 
 
     def __addedSceneInfo(self, folder_name, info):
@@ -117,7 +121,7 @@ class TabSDFWidget(QWidget):
         # files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
         files_texture = suf.walk_texture(path_to_scenes_texture)
         files_scripts = suf.walk_scripts(path_to_scenes_scripts)
-
+        # print('files_scripts', files_scripts)
         files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.project_folder_path_)
         # print('files_texture_unused ', files_texture_unused)
         # print('________________________________________________')
