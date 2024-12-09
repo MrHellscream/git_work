@@ -33,3 +33,5 @@ PATH_TO_SOUNDS = [
                 ]
 
 SOUNDS_EXTENSION = '.ogg'
+
+WINDOW_SIZE = {'left': 100, 'top': 100, 'width': 1200, 'height': 600}
