@@ -1,8 +1,8 @@
 import os
 
 # from PyQt5.uic import loadUiType
-from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction, QWidget, QVBoxLayout,\
-    QHBoxLayout, QPushButton, QListWidget, QLabel
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction, QVBoxLayout, QListWidget, \
+    QLabel
 from PyQt5.QtCore import QSize
 
 from .TabBase import TabFilesWidget
@@ -14,18 +14,13 @@ import constants as const
 import configHelpers as confHelper
 
 
-class TabSDFWidget(QWidget):
+class TabSDFWidget(TabFilesWidget):
     def __init__(self, parent):
-        QWidget.__init__(self, parent)
-        # self.window_ = window
-
-        self.project_folder_path_ = None
+        TabFilesWidget.__init__(self, parent)
 
         self.scene_info = {}
 
-        # GUI Tab
-        self.horizontLayout = QHBoxLayout(self)
-
+    def _createCustomGUI(self):
         self.scenesListWidget = QListWidget()
         self.filesListWidget = QListWidget()
 
@@ -44,35 +39,9 @@ class TabSDFWidget(QWidget):
         self.horizontLayout.addLayout(self.sceneLayout, 15)
         self.horizontLayout.addLayout(self.filesLayout, 75)
 
-        self.verticalLayout = QVBoxLayout(self)
-
-        self.openFileButton = QPushButton("OpenFile")
-        self.openFolderButton = QPushButton("OpenFolder")
-        self.deleteFileButton = QPushButton("DeleteFile")
-        self.resetButton = QPushButton("Reset")
-
-        self.verticalLayout.addWidget(self.openFileButton)
-        self.verticalLayout.addWidget(self.openFolderButton)
-        self.verticalLayout.addWidget(self.deleteFileButton)
-        self.verticalLayout.addWidget(self.resetButton)
-
-        self.horizontLayout.addLayout(self.verticalLayout, 10)
-        self.setLayout(self.horizontLayout)
-
         self.scenesListWidget.itemSelectionChanged.connect(self.__tab1SceneSelectionChanged)
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
 
-        self.openFileButton.clicked.connect(self.__openFileButtonClick)
-        self.openFolderButton.clicked.connect(self.__openFolderButtonClick)
-        self.deleteFileButton.clicked.connect(self.__deleteFileButtonClick)
-        self.resetButton.clicked.connect(self.__resetButtonClick)
-
-        self.setTabButtonsEnabled(False)
-
-    def setTabButtonsEnabled(self, enable):
-        self.openFileButton.setEnabled(enable)
-        self.openFolderButton.setEnabled(enable)
-        self.deleteFileButton.setEnabled(enable)
 
     def update(self, project_folder_path=None):
         if project_folder_path:
@@ -152,14 +121,16 @@ class TabSDFWidget(QWidget):
         else:
             self.setTabButtonsEnabled(False)
 
-    def __openFileButtonClick(self):
+
+    def _openFileButtonCustomClick(self):
+        print('__openFileButtonCustomClick2')
         current_item = self.filesListWidget.currentItem()
         if current_item:
             path_to_file = current_item.text()
             if os.path.exists(path_to_file):
                 os.startfile(path_to_file)
 
-    def __openFolderButtonClick(self):
+    def _openFolderButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
         if current_item:
             path_to_file = current_item.text()
@@ -171,7 +142,7 @@ class TabSDFWidget(QWidget):
                 except OSError as e:  # if failed, report it back to the user
                     print("Error: %s - %s." % (e.filename, e.strerror))
 
-    def __deleteFileButtonClick(self):
+    def _deleteFileButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
 
         if current_item:
@@ -195,7 +166,7 @@ class TabSDFWidget(QWidget):
         else:
             return
 
-    def __resetButtonClick(self):
+    def _resetButtonCustomClick(self):
         self.scenesListWidget.clear()
         self.filesListWidget.clear()
         self.update()
@@ -204,64 +175,24 @@ class TabSDFWidget(QWidget):
 
 
 
-class TabSDSWidget(QWidget):
+class TabSDSWidget(TabFilesWidget):
     def __init__(self, parent):
-        QWidget.__init__(self, parent)
-        # self.window_ = window
-
-        self.project_folder_path_ = None
+        TabFilesWidget.__init__(self, parent)
 
         self.sounds_info = {}
 
-        # GUI Tab
-        self.horizontLayout = QHBoxLayout(self)
 
+    def _createCustomGUI(self):
         self.filesListWidget = QListWidget()
-
         self.filesListLabel = QLabel('Files')
-
         self.filesLayout = QVBoxLayout(self)
 
         self.filesLayout.addWidget(self.filesListLabel, 0)
-
         self.filesLayout.addWidget(self.filesListWidget)
 
         self.horizontLayout.addLayout(self.filesLayout, 75)
 
-
-        self.verticalLayout = QVBoxLayout(self)
-
-        self.openFileButton = QPushButton("OpenFile")
-        self.openFolderButton = QPushButton("OpenFolder")
-        self.deleteFileButton = QPushButton("DeleteFile")
-        self.resetButton = QPushButton("Reset")
-
-        self.verticalLayout.addWidget(self.openFileButton)
-        self.verticalLayout.addWidget(self.openFolderButton)
-        self.verticalLayout.addWidget(self.deleteFileButton)
-        self.verticalLayout.addWidget(self.resetButton)
-
-        self.horizontLayout.addLayout(self.verticalLayout, 10)
-        self.setLayout(self.horizontLayout)
-
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
-
-
-        self.openFileButton.clicked.connect(self.__openFileButtonClick)
-        self.openFolderButton.clicked.connect(self.__openFolderButtonClick)
-        self.deleteFileButton.clicked.connect(self.__deleteFileButtonClick)
-        self.resetButton.clicked.connect(self.__resetButtonClick)
-
-
-        self.setTabButtonsEnabled(False)
-
-
-    def setTabButtonsEnabled(self, enable):
-        self.openFileButton.setEnabled(enable)
-        self.openFolderButton.setEnabled(enable)
-        self.deleteFileButton.setEnabled(enable)
-
-
 
     def update(self, project_folder_path=None):
         if project_folder_path:
@@ -314,7 +245,7 @@ class TabSDSWidget(QWidget):
             self.setTabButtonsEnabled(False)
 
 
-    def __openFileButtonClick(self):
+    def _openFileButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
         if current_item:
             sound_name = current_item.text()
@@ -323,7 +254,7 @@ class TabSDSWidget(QWidget):
                 os.startfile(path_to_file)
 
 
-    def __openFolderButtonClick(self):
+    def _openFolderButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
         if current_item:
             sound_name = current_item.text()
@@ -337,7 +268,7 @@ class TabSDSWidget(QWidget):
                     print("Error: %s - %s." % (e.filename, e.strerror))
 
 
-    def __deleteFileButtonClick(self):
+    def _deleteFileButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
 
         if current_item:
@@ -357,7 +288,7 @@ class TabSDSWidget(QWidget):
                 self.filesListWidget.takeItem(self.filesListWidget.row(item))
 
 
-    def __resetButtonClick(self):
+    def _resetButtonCustomClick(self):
         self.filesListWidget.clear()
         self.update()
 
