@@ -27,6 +27,8 @@ class TabFilesWidget(TabWidget):
     def __init__(self, parent):
         TabWidget.__init__(self, parent)
 
+        self._createCustomGUI()
+
         self.openFileButton = QPushButton("OpenFile")
         self.openFolderButton = QPushButton("OpenFolder")
         self.deleteFileButton = QPushButton("DeleteFile")
@@ -47,22 +49,37 @@ class TabFilesWidget(TabWidget):
 
         self.setTabButtonsEnabled(False)
 
+    def _createCustomGUI(self):
+        pass
 
     def setTabButtonsEnabled(self, enable):
-        TabWidget.setTabButtonsEnabled(self, parent)
+        TabWidget.setTabButtonsEnabled(self, enable)
 
         self.openFileButton.setEnabled(enable)
         self.openFolderButton.setEnabled(enable)
         self.deleteFileButton.setEnabled(enable)
 
-    def __openFileButtonClick(self):
+    def _openFileButtonCustomClick(self):
         pass
+
+    def __openFolderButtonCustomClick(self):
+        pass
+
+    def __deleteFileButtonCustomClick(self):
+        pass
+
+    def __resetButtonCustomClick(self):
+        pass
+
+
+    def __openFileButtonClick(self):
+        self._openFileButtonCustomClick()
 
     def __openFolderButtonClick(self):
-       pass
+        self._openFolderButtonCustomClick()
 
     def __deleteFileButtonClick(self):
-        pass
+        self._deleteFileButtonCustomClick()
 
     def __resetButtonClick(self):
-        pass
+        self._resetButtonCustomClick()

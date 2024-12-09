@@ -1,4 +1,4 @@
-import sys
+# import sys
 # import os
 # import logging
 
@@ -32,5 +32,6 @@ if __name__ == '__main__':
     #
     #     sys.exit(app.exec_())
 
-    app = window.StartApp(sys.argv)
+    app = window.StartApp()
+
     # sys.exit(app.exec_())
