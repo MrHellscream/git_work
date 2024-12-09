@@ -1,10 +1,11 @@
 import os
 
-from PyQt5.uic import loadUiType
+# from PyQt5.uic import loadUiType
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction, QWidget, QVBoxLayout,\
     QHBoxLayout, QPushButton, QListWidget, QLabel
 from PyQt5.QtCore import QSize
 
+from .TabBase import TabFilesWidget
 
 import search_unused_files as suf
 import search_unused_sounds as sus
@@ -15,12 +16,12 @@ import configHelpers as confHelper
 
 class TabSDFWidget(QWidget):
     def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+        QWidget.__init__(self, parent)
         # self.window_ = window
 
         self.project_folder_path_ = None
 
-        self.scene_infos = {}
+        self.scene_info = {}
 
         # GUI Tab
         self.horizontLayout = QHBoxLayout(self)
@@ -109,10 +110,10 @@ class TabSDFWidget(QWidget):
         showContent(const.PATH_TO_CE_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS)
 
     def __addedSceneInfo(self, folder_name, info):
-        self.scene_infos[folder_name] = info
+        self.scene_info[folder_name] = info
 
     def __getSceneInfo(self, folder_name):
-        return self.scene_infos[folder_name]
+        return self.scene_info[folder_name]
 
     def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
         # print('__getContainsUnusedFiles ' + path_to_scenes_texture, path_to_scenes_scripts)
@@ -205,7 +206,7 @@ class TabSDFWidget(QWidget):
 
 class TabSDSWidget(QWidget):
     def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+        QWidget.__init__(self, parent)
         # self.window_ = window
 
         self.project_folder_path_ = None
@@ -366,7 +367,7 @@ class TabSDSWidget(QWidget):
 
 class Main(QMainWindow):
     def __init__(self, folder_path):
-        super(Main, self).__init__()
+        QMainWindow.__init__(self)
         # self.setupUi(self)
 
         self.project_folder_path_ = folder_path
