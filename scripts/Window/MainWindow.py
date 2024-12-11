@@ -4,7 +4,7 @@ import os
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction
 from PyQt5.QtCore import QSize
 
-from .Tab import TabSDFWidget, TabSDSWidget
+from .Tab import TabSDFWidget, TabSDSWidget, TabSDTWidget
 
 import constants as const
 import configHelpers as confHelper
@@ -31,9 +31,11 @@ class Main(QMainWindow):
 
         self.tab1 = TabSDFWidget(self)
         self.tab2 = TabSDSWidget(self)
+        self.tab3 = TabSDTWidget(self)
 
         self.tabs.addTab(self.tab1, "Search unused layers")
         self.tabs.addTab(self.tab2, "Search unused sounds")
+        self.tabs.addTab(self.tab3, "Search duplicate values in texts")
 
         self.tabs.currentChanged.connect(self.onChangeTab)
 

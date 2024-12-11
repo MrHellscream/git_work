@@ -2,10 +2,11 @@ import os
 
 from PyQt5.QtWidgets import QVBoxLayout, QListWidget, QLabel
 
-from .TabBase import TabFilesWidget
+from .TabBase import TabFilesWidget, TabTextWidget
 
 import search_unused_files as suf
 import search_unused_sounds as sus
+import search_duplicate_text as sdw
 
 import constants as const
 
@@ -53,9 +54,8 @@ class TabSDFWidget(TabFilesWidget):
                 return
 
             for folder_name in os.listdir(path_to_scenes_texture):
-                # path = os.path.join(self.project_folder_path_, folder_name)
                 path_to_scene_texture = os.path.join(path_to_scenes_texture, folder_name)
-                # print('path_to_scene_texture ', path_to_scene_texture)
+
 
                 if not os.path.isfile(path_to_scene_texture):
                     path_to_scenes_scripts = os.path.join(self.project_folder_path_,
@@ -81,16 +81,12 @@ class TabSDFWidget(TabFilesWidget):
         return self.scene_info[folder_name]
 
     def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
-        # print('__getContainsUnusedFiles ' + path_to_scenes_texture, path_to_scenes_scripts)
         file_names = []
 
-        # files_texture = suf.merge(suf.walk_texture(path_to_scenes_texture))
         files_texture = suf.walk_texture(path_to_scenes_texture)
         files_scripts = suf.walk_scripts(path_to_scenes_scripts)
-        # print('files_scripts', files_scripts)
+
         files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.project_folder_path_)
-        # print('files_texture_unused ', files_texture_unused)
-        # print('________________________________________________')
 
         for abs_name in files_texture_unused:
             if os.path.isfile(abs_name):
@@ -100,7 +96,6 @@ class TabSDFWidget(TabFilesWidget):
 
     def __tab1SceneSelectionChanged(self):
         folder_name = self.scenesListWidget.currentItem().text()
-        # print('__tab1_scene_selection_changed ' + folder_name)
 
         files_texture_unused = self.__getSceneInfo(folder_name)
 
@@ -283,4 +278,106 @@ class TabSDSWidget(TabFilesWidget):
 
     def _resetButtonCustomClick(self):
         self.filesListWidget.clear()
+        self.update()
+
+
+
+class TabSDTWidget(TabTextWidget):
+    def __init__(self, parent):
+        TabTextWidget.__init__(self, parent)
+
+        self.text_info = {}
+
+        self.full_path_to_text = None
+
+    def _createCustomGUI(self):
+        self.textValuesListWidget = QListWidget()
+        self.textKeysListWidget = QListWidget()
+
+        self.textValuesListLabel = QLabel('Text')
+        self.textKeysListLabel = QLabel('Keys')
+
+        self.textValuesLayout = QVBoxLayout(self)
+        self.textKeysLayout = QVBoxLayout(self)
+
+        self.textValuesLayout.addWidget(self.textValuesListLabel, 0)
+        self.textKeysLayout.addWidget(self.textKeysListLabel, 0)
+
+        self.textValuesLayout.addWidget(self.textValuesListWidget)
+        self.textKeysLayout.addWidget(self.textKeysListWidget)
+
+        self.horizontLayout.addLayout(self.textValuesLayout, 50)
+        self.horizontLayout.addLayout(self.textKeysLayout, 30)
+
+        self.textValuesListWidget.itemSelectionChanged.connect(self.__tab3TextValuesSelectionChanged)
+        self.textKeysListWidget.itemSelectionChanged.connect(self.__tab3TextKeysSelectionChanged)
+
+    def update(self, project_folder_path=None):
+        if project_folder_path:
+            self.project_folder_path_ = project_folder_path
+
+        self.textValuesListWidget.clear()
+        self.textKeysListWidget.clear()
+
+        print('tab3 update ' + self.project_folder_path_)
+
+        self.full_path_to_text = os.path.join(self.project_folder_path_, const.PATH_TO_TEXT)
+        if self.full_path_to_text:
+            try:
+                open_file = open(self.full_path_to_text, 'r')
+            except FileNotFoundError:
+                print('Can not open file ' + filename)
+            else:
+                self.text_info = sdw.find_duplicate(open_file)
+
+                open_file.close()
+
+                for key in self.text_info.keys():
+                    self.textValuesListWidget.addItem(key)
+
+
+    def __tab3TextValuesSelectionChanged(self):
+        key = self.textValuesListWidget.currentItem().text()
+
+        values = self.text_info[key]['keys']
+
+        self.textKeysListWidget.clear()
+        self.setTabButtonsEnabled(False)
+
+        for textKey in values:
+            self.textKeysListWidget.addItem(textKey)
+
+
+    def __tab3TextKeysSelectionChanged(self):
+        current_item = self.textKeysListWidget.currentItem()
+
+        if current_item:
+            self.setTabButtonsEnabled(True)
+        else:
+            self.setTabButtonsEnabled(False)
+
+
+    def _chooseTextButtonCustomClick(self):
+        current_item = self.textKeysListWidget.currentItem()
+
+        if current_item:
+            key = self.textValuesListWidget.currentItem().text()
+            text_key = self.textKeysListWidget.currentItem().text()
+
+            duplicate_keys = list(self.text_info[key]['keys'])
+
+            duplicate_keys.remove(text_key)
+
+            if self.full_path_to_text:
+                sdw.ReplaceLineInFile(self.full_path_to_text, text_key, duplicate_keys)
+
+                self.textKeysListWidget.clear()
+
+                self.textValuesListWidget.takeItem(self.textValuesListWidget.currentRow())
+
+
+    def _resetButtonCustomClick(self):
+        self.textValuesListWidget.clear()
+        self.textKeysListWidget.clear()
+
         self.update()

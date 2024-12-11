@@ -1,5 +1,7 @@
 CONFIG_PATH = 'config.json'
 
+PATH_TO_TEXT = 'assets/Text/text_project.txt'
+
 PATH_TO_SCENES_TEXTURE = 'assets/Texture/Scenes/'
 PATH_TO_SCENES_SCRIPTS = 'assets/Scripts/Scenes/'
 

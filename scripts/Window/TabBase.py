@@ -83,3 +83,47 @@ class TabFilesWidget(TabWidget):
 
     def __resetButtonClick(self):
         self._resetButtonCustomClick()
+
+
+
+class TabTextWidget(TabWidget):
+    def __init__(self, parent):
+        TabWidget.__init__(self, parent)
+
+        self._createCustomGUI()
+
+        self.chooseTextButton = QPushButton("Choose as primary")
+        self.resetButton = QPushButton("Reset")
+
+        self.verticalLayout.addWidget(self.chooseTextButton)
+        self.verticalLayout.addWidget(self.resetButton)
+
+        self.horizontLayout.addLayout(self.verticalLayout, 10)
+        self.setLayout(self.horizontLayout)
+
+        self.chooseTextButton.clicked.connect(self.__chooseTextButtonClick)
+        self.resetButton.clicked.connect(self.__resetButtonClick)
+
+        self.setTabButtonsEnabled(False)
+
+    def _createCustomGUI(self):
+        pass
+
+    def setTabButtonsEnabled(self, enable):
+        TabWidget.setTabButtonsEnabled(self, enable)
+
+        self.chooseTextButton.setEnabled(enable)
+
+
+    def _chooseTextButtonCustomClick(self):
+        pass
+
+    def __resetButtonCustomClick(self):
+        pass
+
+
+    def __chooseTextButtonClick(self):
+        self._chooseTextButtonCustomClick()
+
+    def __resetButtonClick(self):
+        self._resetButtonCustomClick()
