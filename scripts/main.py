@@ -3,11 +3,17 @@
 # import logging
 
 # from window import MainWindow
-
+# from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTabWidget, QAction
 import window
 
 
+
 if __name__ == '__main__':
+
+    file_script = 'C:/GrandMaStudiosWork_temp/Projects/MCF_28\assets/Scripts/Items/_Interactive/0_mytime_00_int.lua'
+    print(file_script.rfind('02_drone_flashdrive_03' + '.lua'))
+
+
     # app = QApplication(sys.argv)
     #
     # project_folder_path = None

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from PyQt5.QtWidgets import QVBoxLayout, QListWidget, QLabel
 
@@ -7,6 +8,7 @@ from .TabBase import TabFilesWidget, TabTextWidget
 import search_unused_files as suf
 import search_unused_sounds as sus
 import search_duplicate_text as sdw
+import search_unused_items as sui
 
 import constants as const
 
@@ -67,18 +69,20 @@ class TabSDFWidget(TabFilesWidget):
                         self.__addedSceneInfo(folder_name, file_names)
                         self.scenesListWidget.addItem(folder_name)
 
-        # ------------
         showContent(const.PATH_TO_SCENES_TEXTURE, const.PATH_TO_SCENES_SCRIPTS)
         showContent(const.PATH_TO_CE_SCENES_TEXTURE, const.PATH_TO_CE_SCENES_SCRIPTS)
 
         showContent(const.PATH_TO_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_INTERACTIVE_ITEM_SCRIPTS)
         showContent(const.PATH_TO_CE_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS)
 
+
     def __addedSceneInfo(self, folder_name, info):
         self.scene_info[folder_name] = info
 
+
     def __getSceneInfo(self, folder_name):
         return self.scene_info[folder_name]
+
 
     def __getContainsUnusedFiles(self, path_to_scenes_texture, path_to_scenes_scripts):
         file_names = []
@@ -94,6 +98,7 @@ class TabSDFWidget(TabFilesWidget):
 
         return file_names
 
+
     def __tab1SceneSelectionChanged(self):
         folder_name = self.scenesListWidget.currentItem().text()
 
@@ -104,6 +109,7 @@ class TabSDFWidget(TabFilesWidget):
         for abs_name in files_texture_unused:
             if os.path.isfile(abs_name):
                 self.filesListWidget.addItem(abs_name)
+
 
     def __tab1FileSelectionChanged(self):
         current_item = self.filesListWidget.currentItem()
@@ -121,6 +127,7 @@ class TabSDFWidget(TabFilesWidget):
             if os.path.exists(path_to_file):
                 os.startfile(path_to_file)
 
+
     def _openFolderButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
         if current_item:
@@ -132,6 +139,7 @@ class TabSDFWidget(TabFilesWidget):
                     os.startfile(path_to_folder)
                 except OSError as e:  # if failed, report it back to the user
                     print("Error: %s - %s." % (e.filename, e.strerror))
+
 
     def _deleteFileButtonCustomClick(self):
         current_item = self.filesListWidget.currentItem()
@@ -157,12 +165,14 @@ class TabSDFWidget(TabFilesWidget):
         else:
             return
 
+
     def _resetButtonCustomClick(self):
         self.scenesListWidget.clear()
         self.filesListWidget.clear()
         self.update()
 
 
+#----------------------------------------------------------------------------------------
 class TabSDSWidget(TabFilesWidget):
     def __init__(self, parent):
         TabFilesWidget.__init__(self, parent)
@@ -181,6 +191,7 @@ class TabSDSWidget(TabFilesWidget):
         self.horizontLayout.addLayout(self.filesLayout, 75)
 
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
+
 
     def update(self, project_folder_path=None):
         if project_folder_path:
@@ -217,13 +228,13 @@ class TabSDSWidget(TabFilesWidget):
         showContent(const.PATH_TO_SOUNDS, const.PATH_TO_SCRIPTS)
 
 
-
-
     def __addedSoundInfo(self, sound_name, info):
         self.sounds_info[sound_name] = info
 
+
     def __getSoundInfo(self, sound_name):
         return self.sounds_info[sound_name]
+
 
     def __tab1FileSelectionChanged(self):
         current_item = self.filesListWidget.currentItem()
@@ -281,14 +292,14 @@ class TabSDSWidget(TabFilesWidget):
         self.update()
 
 
-
+#----------------------------------------------------------------------------------------
 class TabSDTWidget(TabTextWidget):
     def __init__(self, parent):
         TabTextWidget.__init__(self, parent)
 
         self.text_info = {}
-
         self.full_path_to_text = None
+
 
     def _createCustomGUI(self):
         self.textValuesListWidget = QListWidget()
@@ -311,6 +322,7 @@ class TabSDTWidget(TabTextWidget):
 
         self.textValuesListWidget.itemSelectionChanged.connect(self.__tab3TextValuesSelectionChanged)
         self.textKeysListWidget.itemSelectionChanged.connect(self.__tab3TextKeysSelectionChanged)
+
 
     def update(self, project_folder_path=None):
         if project_folder_path:
@@ -365,14 +377,11 @@ class TabSDTWidget(TabTextWidget):
             text_key = self.textKeysListWidget.currentItem().text()
 
             duplicate_keys = list(self.text_info[key]['keys'])
-
             duplicate_keys.remove(text_key)
 
             if self.full_path_to_text:
-                sdw.ReplaceLineInFile(self.full_path_to_text, text_key, duplicate_keys)
-
+                sdw.replaceLineInFile(self.full_path_to_text, text_key, duplicate_keys)
                 self.textKeysListWidget.clear()
-
                 self.textValuesListWidget.takeItem(self.textValuesListWidget.currentRow())
 
 
@@ -380,4 +389,144 @@ class TabSDTWidget(TabTextWidget):
         self.textValuesListWidget.clear()
         self.textKeysListWidget.clear()
 
+        self.update()
+
+
+#----------------------------------------------------------------------------------------
+class TabSUIWidget(TabFilesWidget):
+    def __init__(self, parent):
+        TabFilesWidget.__init__(self, parent)
+
+        self.items_info = {}
+
+        self.openFileButton.setText('Open Item')
+        self.openFolderButton.setText('Open Item Folder')
+        self.deleteFileButton.setText('Delete Item')
+
+    def _createCustomGUI(self):
+        self.filesListWidget = QListWidget()
+        self.filesListLabel = QLabel('Items')
+        self.filesLayout = QVBoxLayout(self)
+
+        self.filesLayout.addWidget(self.filesListLabel, 0)
+        self.filesLayout.addWidget(self.filesListWidget)
+
+        self.horizontLayout.addLayout(self.filesLayout, 75)
+
+        self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
+
+
+    def update(self, project_folder_path=None):
+        if project_folder_path:
+            self.project_folder_path_ = project_folder_path
+
+        print('tab4 update ' + self.project_folder_path_)
+        self.filesListWidget.clear()
+
+        def showContent(path_to_items, path_to_scenes_scripts):
+            items = {}
+            script_names = []
+
+            for path in path_to_items:
+                full_path_to_items = os.path.join(self.project_folder_path_, path)
+                items.update(sui.getItemNames(full_path_to_items))
+        #
+            # print(items)
+        #
+            for path in path_to_scenes_scripts:
+                full_path_to_script = os.path.join(self.project_folder_path_, path)
+                script_names.append(sui.getScriptNames(full_path_to_script))
+        #
+            script_names = sui.merge(script_names)
+            # print(script_names)
+        #
+            unused_items = sui.walk(script_names, items)
+            # print(unused_items)
+        #
+            for item_name, path in unused_items.items():
+                # print(item_name, path)
+                self.__addedItemInfo(item_name, path)
+                self.filesListWidget.addItem(item_name)
+        #
+        showContent(const.PATH_TO_ITEM_TEXTURE, const.PATH_TO_SCENE_SCRIPTS)
+
+
+    def __addedItemInfo(self, item_name, info):
+        self.items_info[item_name] = info
+
+
+    def __getItemInfo(self, item_name):
+        return self.items_info[item_name]
+
+
+    def __tab1FileSelectionChanged(self):
+        current_item = self.filesListWidget.currentItem()
+        if current_item:
+            self.setTabButtonsEnabled(True)
+        else:
+            self.setTabButtonsEnabled(False)
+
+
+    def _openFileButtonCustomClick(self):
+        current_item = self.filesListWidget.currentItem()
+        if current_item:
+            item_name = current_item.text()
+            path_to_file = self.__getItemInfo(item_name)
+            if os.path.exists(path_to_file):
+                os.startfile(path_to_file)
+
+
+    def _openFolderButtonCustomClick(self):
+        current_item = self.filesListWidget.currentItem()
+        if current_item:
+            item_name = current_item.text()
+            path_to_file = self.__getItemInfo(item_name)
+            path_to_folder = os.path.dirname(path_to_file)
+
+            if os.path.exists(path_to_folder):
+                try:
+                    os.startfile(path_to_folder)
+                except OSError as e:  # if failed, report it back to the user
+                    print("Error: %s - %s." % (e.filename, e.strerror))
+
+
+    def _deleteFileButtonCustomClick(self):
+        current_item = self.filesListWidget.currentItem()
+
+        if current_item:
+            item_name = current_item.text()
+            path_to_folder = self.__getItemInfo(item_name)
+            if os.path.exists(path_to_folder):
+                try:
+                    # os.remove(path_to_folder)
+                    shutil.rmtree(path_to_folder)
+
+                    for dir in [const.PATH_TO_INTERACTIVE_ITEM_SCRIPTS, const.PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS]:
+                        # print(dir)
+                        path_to_file = os.path.join(self.project_folder_path_, dir, item_name)
+                        # print(path_to_file)
+                        if os.path.exists(path_to_file + '.lua'):
+                            os.remove(path_to_file + '.lua')
+
+                        if os.path.exists(path_to_file + '_Anim.lua'):
+                            os.remove(path_to_file + '_Anim.lua')
+                    #
+                    for dir in [const.PATH_TO_INTERACTIVE_ITEM_TEXTURE, const.PATH_TO_CE_INTERACTIVE_ITEM_TEXTURE]:
+                        path_to_int_folder = os.path.join(self.project_folder_path_, dir, item_name)
+                        if os.path.exists(path_to_int_folder):
+                            shutil.rmtree(path_to_int_folder)
+
+                except OSError as e:  # if failed, report it back to the user
+                    print("Error: %s - %s." % (e.filename, e.strerror))
+                    return
+            else:
+                print("The file does not exist")
+
+            selected_items = self.filesListWidget.selectedItems()
+            for item in selected_items:
+                self.filesListWidget.takeItem(self.filesListWidget.row(item))
+
+
+    def _resetButtonCustomClick(self):
+        self.filesListWidget.clear()
         self.update()

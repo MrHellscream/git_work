@@ -14,6 +14,18 @@ PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS = 'assets/ExtraGameplay/Scripts/Items/_Inter
 PATH_TO_CE_SCENES_TEXTURE = 'assets/ExtraGameplay/Texture/Scenes/'
 PATH_TO_CE_SCENES_SCRIPTS = 'assets/ExtraGameplay/Scripts/Scenes/'
 
+PATH_TO_ITEM_TEXTURE = [
+                        'assets/Texture/Items/',
+                        'assets/ExtraGameplay/Texture/Items/'
+                    ]
+
+PATH_TO_SCENE_SCRIPTS = [
+                        PATH_TO_SCENES_SCRIPTS,
+                        PATH_TO_CE_SCENES_SCRIPTS,
+                        PATH_TO_INTERACTIVE_ITEM_SCRIPTS,
+                        PATH_TO_CE_INTERACTIVE_ITEM_SCRIPTS
+                    ]
+
 # PATH_TO_SCRIPTS = [
 #                     PATH_TO_SCENES_SCRIPTS,
 #                     PATH_TO_CE_SCENES_SCRIPTS,

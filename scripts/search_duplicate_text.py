@@ -36,8 +36,8 @@ def find_duplicate(file):
     return result
 
 
-def ReplaceLineInFile(file_name, choose_key, duplicate_keys):
-    print(file_name, choose_key, duplicate_keys)
+def replaceLineInFile(file_name, choose_key, duplicate_keys):
+    # print(file_name, choose_key, duplicate_keys)
     with fileinput.FileInput(file_name, inplace=True) as file:
         for line in file:
             line = line.rstrip()  # remove trailing (invisible) space
