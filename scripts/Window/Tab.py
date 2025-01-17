@@ -1,7 +1,8 @@
 import os
 import shutil
 
-from PyQt5.QtWidgets import QVBoxLayout, QListWidget, QLabel
+
+from PyQt5.QtWidgets import QVBoxLayout, QListWidget, QLabel, QPushButton
 
 from .TabBase import TabFilesWidget, TabTextWidget
 
@@ -338,7 +339,7 @@ class TabSDTWidget(TabTextWidget):
             try:
                 open_file = open(self.full_path_to_text, 'r')
             except FileNotFoundError:
-                print('Can not open file ' + filename)
+                print('Can not open file ' + self.full_path_to_text)
             else:
                 self.text_info = sdw.find_duplicate(open_file)
 
@@ -402,6 +403,10 @@ class TabSUIWidget(TabFilesWidget):
         self.openFileButton.setText('Open Item')
         self.openFolderButton.setText('Open Item Folder')
         self.deleteFileButton.setText('Delete Item')
+
+        self.precacheStaticInfoButton = QPushButton("PrecacheStaticInfo")
+        self.verticalLayout.addWidget(self.precacheStaticInfoButton)
+        self.precacheStaticInfoButton.clicked.connect(self.__precacheStaticInfoButtonClick)
 
     def _createCustomGUI(self):
         self.filesListWidget = QListWidget()
@@ -530,3 +535,11 @@ class TabSUIWidget(TabFilesWidget):
     def _resetButtonCustomClick(self):
         self.filesListWidget.clear()
         self.update()
+
+    def __precacheStaticInfoButtonClick(self):
+        path_to_precache_static_info = os.path.join(self.project_folder_path_, const.PATH_TO_PRECACHE_STATIC_INFO)
+        old_root = os.getcwd()
+        os.chdir(os.path.normpath(os.path.dirname(path_to_precache_static_info)))
+        os.startfile(os.path.normpath(path_to_precache_static_info))
+        os.chdir(old_root)
+
