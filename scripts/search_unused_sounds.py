@@ -1,91 +1,68 @@
 import os
+import re
 
+def getSoundNames(directory):
+    """
+    Collects sound file names and their full paths from a given directory, including subdirectories,
+    while filtering out names where the base name (without extension) is written in all uppercase letters.
 
-def merge(lst, res=None):
-    if res is None:
-        res = []
-    for el in lst:
-        merge(el, res) if isinstance(el, list) else res.append(el)
-    return res
+    Args:
+        directory (str): Path to the directory containing sound files.
 
-
-def getSoundNames(dir):
+    Returns:
+        dict: A dictionary with sound file names (without extensions) as keys
+              and their full paths as values.
+    """
     sounds = {}
-    if os.path.exists(dir):
-        sound_names = os.listdir(dir)
 
-        sounds = dict((os.path.splitext(sound_name)[0], os.path.join(dir, sound_name)) for sound_name in sound_names)
-    else:
-        print('What went wrong!!!!Maybe can not open folder: ' + dir)
+    if not os.path.exists(directory):
+        print(f"Error: Unable to open directory '{directory}'.")
+        return sounds
+
+    # Walk through directory and subdirectories
+    for root, _, files in os.walk(directory):
+        for file_name in files:
+            file_path = os.path.join(root, file_name)
+            if os.path.isfile(file_path):
+                # Extract the base name (without extension)
+                base_name = os.path.splitext(file_name)[0]
+
+                # Skip files if the base name is all uppercase
+                if base_name.isupper():
+                    continue
+
+                # Add base name as key and full path as value
+                sounds[base_name] = file_path
 
     return sounds
 
 
-def getScriptNames(dir):
-    files = []
-    if os.path.exists(dir):
-        for name in os.listdir(dir):
+def walk(file_scripts, sounds):
+    """
+    Checks a list of script files for references to sound names and returns
+    the sounds that were not found in any of the scripts.
 
-            path = os.path.join(dir, name)
-            # and (name.rfind('.lua') <> -1)
-            if os.path.isfile(path):
-                if name.rfind('_Anim.lua') == -1 and \
-                   name != 'SoundsList.lua' and \
-                    name.rfind('_Dialog_') == -1 and \
-                    name.rfind('_Zoom_') == -1:
-                    files.append(path)
+    Args:
+        file_scripts (list): List of file paths to script files.
+        sounds (dict): Dictionary of sound names and their file paths.
 
-            elif os.path.isdir(path):
-                files.append(getScriptNames(path))
-    else:
-        print('What went wrong!!!!Maybe can not open folder: ' + dir)
+    Returns:
+        dict: A dictionary of sounds that were not found in the script files.
+    """
+    # Create a copy of sounds to track unused sounds
+    unused_sounds = sounds.copy()
 
-    return files
-
-
-def walk(files_scripts, sounds):
-    found_sounds = []
-
-    sounds_copy = dict.copy(sounds)
-
-    sound_names = sounds_copy.keys()
-
-    for file_script in files_scripts:
+    for file_script in file_scripts:
         try:
-            with open(file_script) as f:
-                for num, line in enumerate(f, start=1):
-                    for sound_name in sound_names:
-                        if sound_name in line:
-                            found_sounds.append(sound_name)
-        except OSError:
-            print('What went wrong!!!!Maybe can not open file: ' + file_script)
+            with open(file_script, 'r') as script_file:
+                script_content = script_file.read()
 
+                # Check for each sound name in the script file's content
+                for sound_name in list(unused_sounds.keys()):
+                    if sound_name in script_content:
+                        unused_sounds.pop(sound_name)
 
-        for found_sound_name in found_sounds:
-            if sounds_copy.get(found_sound_name):
-                sounds_copy.pop(found_sound_name)
-        found_sounds = []
+        except OSError as e:
+            print(f"Error opening file '{file_script}': {e}")
 
-    return sounds_copy
-#
-# print 'Start search unused sounds:\n'
-# try:
-#     for path in pathToScenesScripts:
-#         scripts.append(GetScripts(path))
-#     scripts = merge(scripts)
-#
-#     for path in pathToSounds:
-#         sounds.append(GetSounds(path))
-#     sounds = merge(sounds)
-#
-#     filesSoundsUnused = walk(scripts, sounds)
-#     if len(filesSoundsUnused) > 0:
-#         for fileSoundsUnused in filesSoundsUnused:
-#             print fileSoundsUnused
-#     else:
-#         print '\nHaha, lucky, nothing found.'
-# except OSError:
-#     print 'What went wrong!!!!'
-# finally:
-#     print '\nFinish search unused sounds.'
-# raw_input()
+    return unused_sounds

@@ -1,4 +1,4 @@
-# import sys
+import sys
 # import os
 # import logging
 
@@ -12,8 +12,8 @@ if __name__ == '__main__':
 
     # file_script = 'C:/GrandMaStudiosWork_temp/Projects/MCF_28\assets/Scripts/Items/_Interactive/0_mytime_00_int.lua'
     # print(file_script.rfind('02_drone_flashdrive_03' + '.lua'))
-
-
+    # file_script = 'SCENE_END_OF_SURVEY_STORY_1'
+    # print(file_script.isupper())
     # app = QApplication(sys.argv)
     #
     # project_folder_path = None

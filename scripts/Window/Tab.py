@@ -12,7 +12,7 @@ import search_duplicate_text as sdw
 import search_unused_items as sui
 
 import constants as const
-
+import searchHelpers as sHelpers
 
 class TabSDFWidget(TabFilesWidget):
     def __init__(self, parent):
@@ -213,9 +213,15 @@ class TabSDSWidget(TabFilesWidget):
 
             for path in path_to_scenes_scripts:
                 full_path_to_script = os.path.join(self.project_folder_path_, path)
-                script_names.append(sus.getScriptNames(full_path_to_script))
+                # script_names.append(sus.get_script_names(full_path_to_script))
+                script_names.append(sHelpers.get_files_in_directory(full_path_to_script, extensions=[".lua"],
+                                                                    exclude_patterns=["_Anim", "_Dialog_", "_Zoom_",
+                                                                                      "List.lua", "Table.lua",
+                                                                                      "MovieScreen.lua",
+                                                                                      "Animations.lua",
+                                                                                      "ApplicationManager"]))
 
-            script_names = sus.merge(script_names)
+            script_names = sHelpers.merge(script_names)
             # print(script_names)
 
             unused_sounds = sus.walk(script_names, sounds)
@@ -341,10 +347,10 @@ class TabSDTWidget(TabTextWidget):
             except FileNotFoundError:
                 print('Can not open file ' + self.full_path_to_text)
             else:
-                self.text_info = sdw.find_duplicate(open_file)
+                self.text_info = sdw.find_duplicates(open_file)
 
                 open_file.close()
-
+                # print(self.text_info )
                 for key in self.text_info.keys():
                     self.textValuesListWidget.addItem(key)
 
@@ -381,7 +387,7 @@ class TabSDTWidget(TabTextWidget):
             duplicate_keys.remove(text_key)
 
             if self.full_path_to_text:
-                sdw.replaceLineInFile(self.full_path_to_text, text_key, duplicate_keys)
+                sdw.replace_line_in_file(self.full_path_to_text, text_key, duplicate_keys)
                 self.textKeysListWidget.clear()
                 self.textValuesListWidget.takeItem(self.textValuesListWidget.currentRow())
 
@@ -434,15 +440,18 @@ class TabSUIWidget(TabFilesWidget):
 
             for path in path_to_items:
                 full_path_to_items = os.path.join(self.project_folder_path_, path)
-                items.update(sui.getItemNames(full_path_to_items))
+                items.update(sui.get_item_names(full_path_to_items))
         #
             # print(items)
         #
             for path in path_to_scenes_scripts:
                 full_path_to_script = os.path.join(self.project_folder_path_, path)
-                script_names.append(sui.getScriptNames(full_path_to_script))
+                # script_names.append(sui.get_script_names(full_path_to_script))
+
+                script_names.append(sHelpers.get_files_in_directory(full_path_to_script, extensions=[".lua"],
+                                       exclude_patterns=["_Anim", "_Dialog_", "_Zoom_", "ItemList"]))
         #
-            script_names = sui.merge(script_names)
+            script_names = sHelpers.merge(script_names)
             # print(script_names)
         #
             unused_items = sui.walk(script_names, items)
@@ -452,7 +461,7 @@ class TabSUIWidget(TabFilesWidget):
                 # print(item_name, path)
                 self.__addedItemInfo(item_name, path)
                 self.filesListWidget.addItem(item_name)
-        #
+
         showContent(const.PATH_TO_ITEM_TEXTURE, const.PATH_TO_SCENE_SCRIPTS)
 
 

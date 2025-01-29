@@ -44,9 +44,8 @@ PATH_TO_SCRIPTS = [
                   ]
 
 PATH_TO_SOUNDS = [
-                'assets/Sound/Scenes/00_Common/',
-                'assets/Sound/Common/',
-                'assets/Sound/AmbientSounds/'
+                'assets/Sound/',
+                'assets/ExtraGameplay/Sound/'
                 ]
 
 SOUNDS_EXTENSION = '.ogg'

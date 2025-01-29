@@ -83,7 +83,7 @@ class Main(QMainWindow):
 
         if new_project_folder_path and os.path.exists(new_project_folder_path):
             print(new_project_folder_path)
-            confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, new_project_folder_path)
+            confHelper.save_project_folder_path_to_config(const.CONFIG_PATH, new_project_folder_path)
 
             self.setProjectFolderPath(new_project_folder_path)
 
@@ -98,16 +98,16 @@ def StartApp():
     project_folder_path = None
 
     if os.path.exists(const.CONFIG_PATH):
-        project_folder_path = confHelper.getProjectFolderPathFromConfig(const.CONFIG_PATH)
+        project_folder_path = confHelper.get_project_folder_path_from_config(const.CONFIG_PATH)
     else:
-        confHelper.createConfig(const.CONFIG_PATH)
+        confHelper.create_config(const.CONFIG_PATH)
 
     if not project_folder_path:
 
         # only folder.
         project_folder_path = QFileDialog.getExistingDirectory(None, 'Select project folder:', os.getcwd())
 
-        confHelper.saveProjectFolderPathToConfig(const.CONFIG_PATH, project_folder_path)
+        confHelper.save_project_folder_path_to_config(const.CONFIG_PATH, project_folder_path)
 
 
     if project_folder_path:
@@ -116,3 +116,4 @@ def StartApp():
         main.update()
 
         sys.exit(app.exec_())
+    # return app

@@ -3,13 +3,6 @@ import os
 import re 
 
 
-def merge(lst, res=None):
-    if res is None:
-        res = []
-    for el in lst:
-        merge(el) if isinstance(el, list) else res.append(el)
-    return res
-
 
 def walk_texture(directory):
     files = []
@@ -31,17 +24,19 @@ def walk_texture(directory):
 def walk_scripts(directory):
     files = []
 
-    def isLuaAnimFile(file_name):
-        return re.search(r'.+_Anim.lua\b', file_name) #(name.rfind('_Anim.lua') == -1)
+    pattern = r"^(?!.*(Table\.lua|List\.lua|_Anim\.lua|_Dialog_|_Zoom_|Animation|MovieScreen)).*\.lua$"
+    def isNormalLuaFile(file_name):
+        # return  re.search(r'.+_Anim.lua\b', file_name) #(name.rfind('_Anim.lua') == -1)
+        return re.match(pattern, name)
     
     if os.path.exists(directory):
         for name in os.listdir(directory):
             path = os.path.join(directory, name)
-            if os.path.isfile(path) and not isLuaAnimFile(name): 
+            if os.path.isfile(path) and isNormalLuaFile(name):
                 files.append(path)
     else:
         name = directory + '.lua'
-        if os.path.isfile(name) and not isLuaAnimFile(name):
+        if os.path.isfile(name) and isNormalLuaFile(name):
             files.append(name)
     
     return files

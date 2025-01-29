@@ -2,56 +2,72 @@ import os
 import re
 import fileinput
 
+# Regular expression to match key-value pairs
 regex = re.compile(r"(?P<key>^.+)=(?P<text>(.+))")
 
-text = "{key}=$({value})"  #
+# Template for replacement
+text_template = "{key}=$({value})"
 
+def remove_chars(subj, chars):
+    """
+    Removes specified characters from a string.
 
-def remove_chars_translate_bytes(subj, chars):
-    return subj.translate(None, ''.join(chars))
+    Args:
+        subj (str): Input string.
+        chars (str): Characters to remove.
 
+    Returns:
+        str: Cleaned string.
+    """
+    return subj.translate(str.maketrans('', '', chars))
 
-def find_duplicate(file):
+def find_duplicates(file):
+    """
+    Finds duplicate text values in a file.
+
+    Args:
+        file (iterable): Iterable of file lines.
+
+    Returns:
+        dict: Dictionary with duplicate text as keys and occurrence info as values.
+    """
     candidate_dict = {}
 
-    for textLine in file:
-        try:
-            result = regex.search(textLine)
-            key, text = result.group('key'), result.group('text')
-        except AttributeError:
-            pass
-        else:
-            # print(key, text)
-            if not re.search(r'\A\$\(', text):
-                text = text.replace('\\t', '').replace('\\n', ' ')
+    for line in file:
+        match = regex.search(line)
+        if not match:
+            continue
 
-                if text in candidate_dict:
-                    candidate_dict[text]['count'] += 1
-                    candidate_dict[text]['keys'].append(key)
-                else:
-                    candidate_dict[text] = {'count': 1, 'keys': [key]}
+        key, value = match.group('key'), match.group('text')
 
-    result = {k: v for k, v in candidate_dict.items() if v['count'] != 1}
+        if not re.match(r'\A\$\(', value):
+            value = value.replace('\\t', '').replace('\\n', ' ')
 
-    return result
+            if value in candidate_dict:
+                candidate_dict[value]['count'] += 1
+                candidate_dict[value]['keys'].append(key)
+            else:
+                candidate_dict[value] = {'count': 1, 'keys': [key]}
+
+    return {k: v for k, v in candidate_dict.items() if v['count'] > 1}
 
 
-def replaceLineInFile(file_name, choose_key, duplicate_keys):
-    # print(file_name, choose_key, duplicate_keys)
+def replace_line_in_file(file_name, choose_key, duplicate_keys):
+    """
+    Replaces duplicate text occurrences in a file with a chosen key.
+
+    Args:
+        file_name (str): Path to the file.
+        choose_key (str): Key to use as the replacement reference.
+        duplicate_keys (set): Set of duplicate keys to replace.
+    """
     with fileinput.FileInput(file_name, inplace=True) as file:
         for line in file:
-            line = line.rstrip()  # remove trailing (invisible) space
-
-            try:
-                result = regex.search(line)
-                key = result.group('key')
-            except AttributeError:
-                print(line)
-            else:
-                d_keys = list(duplicate_keys)
-                if key in d_keys:
-                    print(text.format(key=key, value=choose_key))
+            match = regex.search(line)
+            if match:
+                key = match.group('key')
+                if key in duplicate_keys:
+                    print(text_template.format(key=key, value=choose_key))
                     duplicate_keys.remove(key)
-                else:
-                    print(line)
-
+                    continue
+            print(line, end='')
