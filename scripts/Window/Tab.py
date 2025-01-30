@@ -36,8 +36,8 @@ class TabSDFWidget(TabFilesWidget):
         self.sceneLayout.addWidget(self.scenesListWidget)
         self.filesLayout.addWidget(self.filesListWidget)
 
-        self.horizontLayout.addLayout(self.sceneLayout, 15)
-        self.horizontLayout.addLayout(self.filesLayout, 75)
+        self.horizontalLayout.addLayout(self.sceneLayout, 15)
+        self.horizontalLayout.addLayout(self.filesLayout, 75)
 
         self.scenesListWidget.itemSelectionChanged.connect(self.__tab1SceneSelectionChanged)
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
@@ -89,7 +89,8 @@ class TabSDFWidget(TabFilesWidget):
         file_names = []
 
         files_texture = suf.walk_texture(path_to_scenes_texture)
-        files_scripts = suf.walk_scripts(path_to_scenes_scripts)
+        files_scripts = suf.walk_scripts(path_to_scenes_scripts, exclude_patterns=["_Anim.lua",
+                                                                                   "_Dialog_"])
 
         files_texture_unused = suf.walk(path_to_scenes_scripts, files_scripts, files_texture, self.project_folder_path_)
 
@@ -189,7 +190,7 @@ class TabSDSWidget(TabFilesWidget):
         self.filesLayout.addWidget(self.filesListLabel, 0)
         self.filesLayout.addWidget(self.filesListWidget)
 
-        self.horizontLayout.addLayout(self.filesLayout, 75)
+        self.horizontalLayout.addLayout(self.filesLayout, 75)
 
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
 
@@ -207,7 +208,7 @@ class TabSDSWidget(TabFilesWidget):
 
             for path in path_to_sounds:
                 full_path_to_sounds = os.path.join(self.project_folder_path_, path)
-                sounds.update(sus.getSoundNames(full_path_to_sounds))
+                sounds.update(sus.get_sound_names(full_path_to_sounds))
 
             # print(sounds)
 
@@ -324,8 +325,8 @@ class TabSDTWidget(TabTextWidget):
         self.textValuesLayout.addWidget(self.textValuesListWidget)
         self.textKeysLayout.addWidget(self.textKeysListWidget)
 
-        self.horizontLayout.addLayout(self.textValuesLayout, 50)
-        self.horizontLayout.addLayout(self.textKeysLayout, 30)
+        self.horizontalLayout.addLayout(self.textValuesLayout, 50)
+        self.horizontalLayout.addLayout(self.textKeysLayout, 30)
 
         self.textValuesListWidget.itemSelectionChanged.connect(self.__tab3TextValuesSelectionChanged)
         self.textKeysListWidget.itemSelectionChanged.connect(self.__tab3TextKeysSelectionChanged)
@@ -422,7 +423,7 @@ class TabSUIWidget(TabFilesWidget):
         self.filesLayout.addWidget(self.filesListLabel, 0)
         self.filesLayout.addWidget(self.filesListWidget)
 
-        self.horizontLayout.addLayout(self.filesLayout, 75)
+        self.horizontalLayout.addLayout(self.filesLayout, 75)
 
         self.filesListWidget.itemSelectionChanged.connect(self.__tab1FileSelectionChanged)
 

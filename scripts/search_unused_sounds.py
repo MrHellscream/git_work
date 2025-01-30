@@ -1,7 +1,7 @@
 import os
-import re
 
-def getSoundNames(directory):
+
+def get_sound_names(directory):
     """
     Collects sound file names and their full paths from a given directory, including subdirectories,
     while filtering out names where the base name (without extension) is written in all uppercase letters.

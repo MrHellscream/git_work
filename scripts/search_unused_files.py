@@ -1,76 +1,104 @@
-import sys
 import os
-import re 
-
+import re
 
 
 def walk_texture(directory):
+    """
+    Recursively collects file paths from a texture directory, excluding '_all' directories.
+
+    Args:
+        directory (str): Path to the texture directory.
+
+    Returns:
+        list: List of file paths.
+    """
     files = []
 
-    if os.path.exists(directory):
-        basename = os.path.basename(directory)
-        if not re.search(r'.+_all\b', basename):
-            for name in os.listdir(directory):
-                path = os.path.join(directory, name)
-                path = os.path.normpath(path)
+    if not os.path.exists(directory):
+        return files
 
-                if os.path.isfile(path):
-                    files.append(path)
-                elif name != 'Animations':
-                    files.extend(walk_texture(path))
+    basename = os.path.basename(directory)
+    if basename.endswith('_all'):
+        return files
+
+    for entry in os.scandir(directory):
+        path = os.path.normpath(entry.path)
+        if entry.is_file():
+            files.append(path)
+        elif entry.is_dir() and entry.name != 'Animations':
+            files.extend(walk_texture(path))
+
     return files
 
 
-def walk_scripts(directory):
-    files = []
+def walk_scripts(directory, exclude_patterns=None):
+    """
+    Collects Lua script files while filtering out unwanted patterns.
 
-    pattern = r"^(?!.*(Table\.lua|List\.lua|_Anim\.lua|_Dialog_|_Zoom_|Animation|MovieScreen)).*\.lua$"
-    def isNormalLuaFile(file_name):
-        # return  re.search(r'.+_Anim.lua\b', file_name) #(name.rfind('_Anim.lua') == -1)
-        return re.match(pattern, name)
-    
-    if os.path.exists(directory):
-        for name in os.listdir(directory):
-            path = os.path.join(directory, name)
-            if os.path.isfile(path) and isNormalLuaFile(name):
-                files.append(path)
-    else:
+    Args:
+        directory (str): Path to the script directory.
+
+    Returns:
+        list: List of Lua script file paths.
+    """
+    files = []
+    # exclude_patterns = ["Table.lua", "List.lua", "_Anim.lua", "_Dialog_", "_Zoom_", "Animation", "MovieScreen"]
+
+    if not os.path.exists(directory):
         name = directory + '.lua'
-        if os.path.isfile(name) and isNormalLuaFile(name):
+        if os.path.isfile(name) and not any(pattern in name for pattern in exclude_patterns):
             files.append(name)
-    
-    return files
+        return files
 
+    for entry in os.scandir(directory):
+        if entry.is_file() and entry.name.endswith(".lua") and not any(
+                pattern in entry.name for pattern in exclude_patterns):
+            files.append(entry.path)
+
+    return files
 
 
 def get_real_path(abs_name, project_folder_path):
-    real_path = os.path.relpath(abs_name, start=project_folder_path).replace('\\', '/')
-    return real_path
+    """
+    Converts an absolute path to a relative project path with normalized separators.
+
+    Args:
+        abs_name (str): Absolute file path.
+        project_folder_path (str): Project root directory.
+
+    Returns:
+        str: Normalized relative path.
+    """
+    return os.path.normpath(os.path.relpath(abs_name, start=project_folder_path)).replace('\\', '/')
 
 
 def walk(directory, files_scripts, files_texture, project_folder_path):
-    pattern_true = []
-    files_texture_copy = list(files_texture)
+    """
+    Identifies unused texture files by checking references in script files.
 
-    for fileScript in files_scripts:
-        name = os.path.join(directory, fileScript)
+    Args:
+        directory (str): Path to the script directory.
+        files_scripts (list): List of script file paths.
+        files_texture (list): List of texture file paths.
+        project_folder_path (str): Project root directory.
+
+    Returns:
+        list: List of unused texture file paths.
+    """
+    unused_textures = set(files_texture)
+
+    for file_script in files_scripts:
+        script_path = os.path.join(directory, file_script)
+
         try:
-            data = str(open(name, 'rb').read())
-            for abs_name in files_texture_copy:
+            with open(script_path, 'r', encoding='utf-8', errors='ignore') as script_file:
+                data = script_file.read()
 
-                real_path = get_real_path(abs_name, project_folder_path)
-
-                if data.find(real_path) != -1:
-                    pattern_true.append(abs_name)
-                else:
-                    pass
-
-            for patternName in pattern_true:
-                files_texture_copy.remove(patternName)
-
+                used_textures = {texture for texture in unused_textures if
+                                 get_real_path(texture, project_folder_path) in data}
+                unused_textures.difference_update(used_textures)
         except OSError:
-            print('What went wrong!!!!Maybe can not open or read file: ' + name)
+            print(f"Error: Unable to open or read file: {script_path}")
             return None
-        finally:
-            pattern_true = []
-    return files_texture_copy
+
+    return list(unused_textures)
