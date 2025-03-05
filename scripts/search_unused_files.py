@@ -31,31 +31,31 @@ def walk_texture(directory):
     return files
 
 
-def walk_scripts(directory, exclude_patterns=None):
-    """
-    Collects Lua script files while filtering out unwanted patterns.
-
-    Args:
-        directory (str): Path to the script directory.
-
-    Returns:
-        list: List of Lua script file paths.
-    """
-    files = []
-    # exclude_patterns = ["Table.lua", "List.lua", "_Anim.lua", "_Dialog_", "_Zoom_", "Animation", "MovieScreen"]
-
-    if not os.path.exists(directory):
-        name = directory + '.lua'
-        if os.path.isfile(name) and not any(pattern in name for pattern in exclude_patterns):
-            files.append(name)
-        return files
-
-    for entry in os.scandir(directory):
-        if entry.is_file() and entry.name.endswith(".lua") and not any(
-                pattern in entry.name for pattern in exclude_patterns):
-            files.append(entry.path)
-
-    return files
+# def walk_scripts(directory, exclude_patterns=None):
+#     """
+#     Collects Lua script files while filtering out unwanted patterns.
+#
+#     Args:
+#         directory (str): Path to the script directory.
+#         exclude_patterns (list, optional): List of substrings to exclude files.
+#     Returns:
+#         list: List of Lua script file paths.
+#     """
+#     files = []
+#     # exclude_patterns = ["Table.lua", "List.lua", "_Anim.lua", "_Dialog_", "_Zoom_", "Animation", "MovieScreen"]
+#
+#     if not os.path.exists(directory):
+#         name = directory + '.lua'
+#         if os.path.isfile(name) and not any(pattern in name for pattern in exclude_patterns):
+#             files.append(name)
+#         return files
+#
+#     for entry in os.scandir(directory):
+#         if entry.is_file() and entry.name.endswith(".lua") and not any(
+#                 pattern in entry.name for pattern in exclude_patterns):
+#             files.append(entry.path)
+#
+#     return files
 
 
 def get_real_path(abs_name, project_folder_path):

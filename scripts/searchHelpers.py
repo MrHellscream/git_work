@@ -33,7 +33,12 @@ def get_files_in_directory(directory, extensions=None, exclude_patterns=None):
     files = []
 
     if not os.path.exists(directory):
-        print(f"Error: Directory '{directory}' does not exist.")
+
+        name = directory + '.lua'
+        if os.path.isfile(name) and not any(pattern in name for pattern in exclude_patterns):
+            files.append(name)
+        else:
+            print(f"Error: Directory '{directory}' does not exist.")
         return files
 
     for root, _, filenames in os.walk(directory):
