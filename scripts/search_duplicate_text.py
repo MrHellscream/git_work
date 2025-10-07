@@ -61,13 +61,33 @@ def replace_line_in_file(file_name, choose_key, duplicate_keys):
         choose_key (str): Key to use as the replacement reference.
         duplicate_keys (set): Set of duplicate keys to replace.
     """
-    with fileinput.FileInput(file_name, inplace=True) as file:
-        for line in file:
-            match = regex.search(line)
-            if match:
-                key = match.group('key')
-                if key in duplicate_keys:
-                    print(text_template.format(key=key, value=choose_key))
-                    duplicate_keys.remove(key)
-                    continue
-            print(line, end='')
+    # with fileinput.FileInput(file_name, inplace=True) as file:
+    #     for line in file:
+    #         match = regex.search(line)
+    #         if match:
+    #             key = match.group('key')
+    #             if key in duplicate_keys:
+    #                 print(text_template.format(key=key, value=choose_key))
+    #                 duplicate_keys.remove(key)
+    #                 continue
+    #         print(line, end='')
+
+
+    with open(file_name, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    new_lines = []
+
+    for line in lines:
+        match = regex.search(line)
+        if match:
+            key = match.group('key')
+            if key in duplicate_keys:
+                new_line = text_template.format(key=key, value=choose_key)
+                new_lines.append(new_line + "\n" if not new_line.endswith("\n") else new_line)
+                duplicate_keys.remove(key)
+                continue
+        new_lines.append(line)
+
+    with open(file_name, 'w', encoding='utf-8') as f:
+        f.writelines(new_lines)

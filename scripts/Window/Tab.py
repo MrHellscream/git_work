@@ -335,7 +335,7 @@ class TabSDTWidget(TabTextWidget):
             print(f"Error: Cannot open file {self.full_path_to_text}")
             return
 
-        with open(self.full_path_to_text, "r") as open_file:
+        with open(self.full_path_to_text, "r", encoding='utf-8') as open_file:
             self.text_info = sdw.find_duplicates(open_file)
 
         for key in self.text_info.keys():
